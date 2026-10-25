@@ -120,6 +120,9 @@ main { display: flex; flex-direction: column; gap: 14px; padding-top: 14px; }
 .sets { display: flex; flex-direction: column; gap: 6px; }
 .set { display: grid; grid-template-columns: 26px minmax(0, 1fr) 70px 62px 44px; gap: 8px; align-items: center; }
 .set.nw { grid-template-columns: 26px minmax(0, 1fr) 76px 44px; }
+.set.chk { grid-template-columns: 26px minmax(0, 1fr) 44px; }
+.set.chk .tg { color: var(--fg); }
+.set.chk.done .tg { color: var(--good); }
 .set-h { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); }
 .set .n { font-weight: 700; color: var(--muted); text-align: center; }
 .set .tg { font-size: 14px; color: var(--muted); overflow-wrap: anywhere; }
@@ -260,7 +263,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
   var PLAN = JSON.parse(document.getElementById("plan-data").textContent);
   var STR = PLAN.strings;
   function dec(v) { return (typeof v === "string" && v.charAt(0) === "$") ? STR[+v.slice(1)] : v; }
-  function decObj(o) { var r = {}; for (var k in o) { var v = o[k]; r[k] = (v && typeof v === "object") ? decObj(v) : dec(v); } return r; }
+  function decObj(o) { var r = {}; for (var k in o) { var v = o[k]; r[k] = Array.isArray(v) ? v.map(dec) : (v && typeof v === "object") ? decObj(v) : dec(v); } return r; }
   var DAYS = PLAN.days.map(function (d) { return { kind: d.k, session: dec(d.s), items: d.it.map(decObj) }; });
   var WEEKS = PLAN.weeks, PHASES = PLAN.phases;
   var EST = {};
@@ -279,7 +282,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
   ];
   var TEST_COLS = [["w4", 4], ["w12", 12], ["w24", 24], ["w36", 36], ["w48", 48], ["w51", 51]];
   var TEST_COL_FOR_WEEK = { 4: "w4", 12: "w12", 24: "w24", 36: "w36", 48: "w48", 51: "w51" };
-  var DEFAULT_SETTINGS = { startDate: "2026-11-02", age: 26, heightCm: 180, bodyweight: 183, goal5k: 1320, goalBench: 220.5, goalSquat: 275 };
+  var DEFAULT_SETTINGS = { startDate: "2026-10-26", age: 26, heightCm: 180, bodyweight: 183, goal5k: 1320, goalBench: 220.5, goalSquat: 275 };
   var LIFTS = { bench: /^Bench press/, squat: /^Back squat/, deadlift: /^Deadlift/, ohp: /^Overhead press/ };
   var LIFT_NAME = { bench: "Bench", squat: "Squat", deadlift: "Deadlift", ohp: "Press" };
   var MILESTONES = [
@@ -372,6 +375,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
     return { kind: "plain", sets: it.sets, reps: it.reps, load: it.load };
   }
   function uiType(it, r) {
+    if (it.subs && it.subs.length) return "list";
     if (/^Kegels/.test(it.ex)) return "kegel";
     if (it.part === "Run") return it.pk === "TT" ? "tt" : "run";
     if (r.kind === "test") return "test";
@@ -436,6 +440,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
       return clamp(done / r.sets, 0, 1);
     }
     if (t === "kegel") { var c = (L.k || []).filter(Boolean).length; return clamp(c / kegelCount(it), 0, 1); }
+    if (t === "list") { var cl = (L.c || []).filter(Boolean).length; return clamp(cl / it.subs.length, 0, 1); }
     if (t === "run" || t === "tt") return L.run && L.run.d ? 1 : 0;
     if (t === "test" || t.indexOf("testreps") === 0) return L.v != null ? 1 : 0;
     return L.d ? 1 : 0;
@@ -484,20 +489,21 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
     return null;
   }
   function applyPath(path, data) {
-    if (path === "app/settings") state.settings = Object.assign({}, DEFAULT_SETTINGS, data || {});
+    if (path === "app/settings") { state.settings = Object.assign({}, DEFAULT_SETTINGS, data || {}); state.settingsCustom = true; }
     else if (path === "app/tests") state.tests = clone(data || {});
     else if (path === "app/milestones") state.milestones = clone(data || {});
     else if (path.indexOf("days/") === 0) state.days[path.slice(5)] = clone(data || {});
   }
   function saveLocal() {
-    try { localStorage.setItem(LKEY, JSON.stringify({ settings: state.settings, tests: state.tests, milestones: state.milestones, days: state.days, outbox: Object.keys(outbox), lastSync: state.lastSync || null })); }
+    try { localStorage.setItem(LKEY, JSON.stringify({ settings: state.settingsCustom ? state.settings : null, settingsSaved: !!state.settingsCustom, tests: state.tests, milestones: state.milestones, days: state.days, outbox: Object.keys(outbox), lastSync: state.lastSync || null })); }
     catch (e) { setSync("Phone storage full", "err"); }
   }
   function loadLocal() {
     try {
       var raw = localStorage.getItem(LKEY); if (!raw) return;
       var o = JSON.parse(raw);
-      if (o.settings) state.settings = Object.assign({}, DEFAULT_SETTINGS, o.settings);
+      // Settings are kept only once you've changed them (or they came from the cloud), so new defaults reach the phone.
+      if (o.settings && o.settingsSaved) { state.settings = Object.assign({}, DEFAULT_SETTINGS, o.settings); state.settingsCustom = true; }
       state.tests = o.tests || {}; state.milestones = o.milestones || {}; state.days = o.days || {};
       (o.outbox || []).forEach(function (p) { outbox[p] = true; outboxVer[p] = 1; });
       state.lastSync = o.lastSync || null;
@@ -508,6 +514,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
 
   /* Every edit lands on the phone at once; the outbox lists what still has to reach the cloud. */
   function scheduleSave(path, getData) {
+    if (path === "app/settings") state.settingsCustom = true;
     outbox[path] = true; outboxVer[path] = (outboxVer[path] || 0) + 1;
     saveLocal();
     setSync(state.session ? "Saving" : "Saved on phone", state.session ? "busy" : "");
@@ -739,6 +746,8 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
     var done = itemDone(date, i, it, w), plate = plateFor(it.part);
     var stateTxt = "";
     if (t === "sets") { var c = (L.sets || []).filter(function (s) { return s && s.d; }).length; stateTxt = c + "/" + r.sets; }
+    else if (t === "list") stateTxt = (L.c || []).filter(Boolean).length + "/" + it.subs.length;
+    else if (t === "kegel") stateTxt = (L.k || []).filter(Boolean).length + "/" + kegelCount(it);
     var h = '<article class="ex' + (done >= 0.99 ? " is-done" : "") + '" data-card="' + i + '">' +
       '<header class="ex-h"><span class="plate ' + plate + '" aria-hidden="true"></span><div class="ex-t"><div class="part">' + esc(it.part) + '</div><h3>' + esc(it.ex) + '</h3></div>' +
       '<span class="ex-state' + (done >= 0.99 ? " done" : "") + '">' + (done >= 0.99 ? "Done" : esc(stateTxt)) + '</span></header>';
@@ -796,10 +805,20 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
       return h + '</article>';
     } else if (t === "kegel") {
       var need = kegelCount(it), k = L.k || [];
-      h += '<div class="prev">' + esc(it.notes) + '</div><div class="kegels">';
+      h += '<div class="prev">' + esc(String(it.notes || "").replace(/\s*\d times today\.?$/, "")) + '</div><div class="sets">';
       var labels = need === 2 ? ["Morning", "Night"] : ["Morning", "Midday", "Night"];
-      for (var q = 0; q < need; q++) h += '<button class="pill" type="button" data-act="kegel" data-i="' + i + '" data-q="' + q + '" aria-pressed="' + (k[q] ? "true" : "false") + '"' + dis + '>' + labels[q] + '</button>';
+      for (var q = 0; q < need; q++) h += '<div class="set chk' + (k[q] ? " done" : "") + '"><span class="n">' + (q + 1) + '</span><span class="tg">' + labels[q] + ' session</span>' +
+        '<button class="tick" type="button" data-act="kegel" data-i="' + i + '" data-q="' + q + '" aria-pressed="' + (k[q] ? "true" : "false") + '" aria-label="' + labels[q] + ' session done"' + dis + '>' + ICON_CHECK + '</button></div>';
       return h + '</div></article>';
+    } else if (t === "list") {
+      var c2 = L.c || [];
+      if (it.reps) h += '<div class="rx"><span class="rx-main">' + esc(it.reps) + '</span></div>';
+      h += '<div class="sets">';
+      it.subs.forEach(function (sub, si) {
+        h += '<div class="set chk' + (c2[si] ? " done" : "") + '"><span class="n">' + (si + 1) + '</span><span class="tg">' + esc(sub) + '</span>' +
+          '<button class="tick" type="button" data-act="sub" data-i="' + i + '" data-s="' + si + '" aria-pressed="' + (c2[si] ? "true" : "false") + '" aria-label="' + esc(sub) + ' done"' + dis + '>' + ICON_CHECK + '</button></div>';
+      });
+      h += '</div>';
     } else {
       var info;
       if (typeof r.sets === "string" && /^EMOM/.test(r.sets)) info = r.sets.replace("'", " min") + " · " + r.reps + (r.kind === "bw" ? " reps" : "") + " at the top of each minute";
@@ -1129,6 +1148,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
         if (val == null || !col5) break;
         S5.d = true; L5.sets = [S5]; L5.v = val; setTest(key, col5, val); touchDay(date); rerenderCard(i); break;
       }
+      case "sub": { var Ls = itemLog(date, i, pd.items[i].ex), si = Number(b.dataset.s), n = pd.items[i].subs.length; Ls.c = Ls.c || []; for (var x = 0; x < n; x++) Ls.c[x] = !!Ls.c[x]; Ls.c[si] = !Ls.c[si]; touchDay(date); rerenderCard(i); break; }
       case "kegel": { var L6 = itemLog(date, i, pd.items[i].ex), q = Number(b.dataset.q); L6.k = L6.k || []; L6.k[q] = !L6.k[q]; for (var y = 0; y < L6.k.length; y++) L6.k[y] = !!L6.k[y]; touchDay(date); rerenderCard(i); break; }
       case "ci": { var d7 = ensureDay(date), f = b.dataset.f, v7 = Number(b.dataset.v); d7.checkin[f] = d7.checkin[f] === v7 ? null : v7; touchDay(date); render(); break; }
       case "creatine": { var d8 = ensureDay(date); d8.food.creatine = !d8.food.creatine; touchDay(date); render(); break; }
