@@ -7,8 +7,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 template = (ROOT / "src" / "template.html").read_text(encoding="utf-8")
 plan = (ROOT / "src" / "plan.json").read_text(encoding="utf-8").replace("</", "<\\/")
-body = template.replace("__PLAN_JSON__", plan)
-assert "__PLAN_JSON__" not in body
+demos = (ROOT / "src" / "demos.json").read_text(encoding="utf-8").replace("</", "<\\/")
+body = template.replace("__PLAN_JSON__", plan).replace("__DEMO_JSON__", demos)
+assert "__PLAN_JSON__" not in body and "__DEMO_JSON__" not in body
 
 head = """<!doctype html>
 <html lang="en">

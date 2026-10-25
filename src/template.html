@@ -120,7 +120,17 @@ main { display: flex; flex-direction: column; gap: 14px; padding-top: 14px; }
 .sets { display: flex; flex-direction: column; gap: 6px; }
 .set { display: grid; grid-template-columns: 26px minmax(0, 1fr) 70px 62px 44px; gap: 8px; align-items: center; }
 .set.nw { grid-template-columns: 26px minmax(0, 1fr) 76px 44px; }
-.set.chk { grid-template-columns: 26px minmax(0, 1fr) 44px; }
+.set.chk { grid-template-columns: 26px minmax(0, 1fr) 30px 44px; }
+.set.chk.kg { grid-template-columns: 26px minmax(0, 1fr) 44px; }
+.how-mini { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; color: var(--muted); font-size: 13px; font-weight: 700; text-decoration: none; }
+.howto { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.how { color: var(--accent); font-weight: 600; font-size: 14px; text-decoration: none; padding: 6px 0; }
+.demo { position: relative; width: 132px; aspect-ratio: 3 / 2; max-width: 100%; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: var(--surface-2); padding: 0; flex: none; }
+.demo.big { width: 100%; }
+.demo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.demo img + img { animation: demoflip 1.8s steps(1, end) infinite; }
+@keyframes demoflip { 0% { opacity: 0; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .demo img + img { animation: none; opacity: 0; } .demo.big img + img { opacity: 1; } }
 .set.chk .tg { color: var(--fg); }
 .set.chk.done .tg { color: var(--good); }
 .set-h { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); }
@@ -255,6 +265,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
 </nav>
 
 <script id="plan-data" type="application/json">__PLAN_JSON__</script>
+<script id="demo-data" type="application/json">__DEMO_JSON__</script>
 <script>
 (function () {
   "use strict";
@@ -265,6 +276,25 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
   function dec(v) { return (typeof v === "string" && v.charAt(0) === "$") ? STR[+v.slice(1)] : v; }
   function decObj(o) { var r = {}; for (var k in o) { var v = o[k]; r[k] = Array.isArray(v) ? v.map(dec) : (v && typeof v === "object") ? decObj(v) : dec(v); } return r; }
   var DAYS = PLAN.days.map(function (d) { return { kind: d.k, session: dec(d.s), items: d.it.map(decObj) }; });
+
+  /* Exercise demos: start/end photos from free-exercise-db (public domain), flipped like a GIF. */
+  var DEMO_RULES = JSON.parse(document.getElementById("demo-data").textContent).map(function (r) { return [new RegExp(r[0], "i"), r[1]]; });
+  function baseName(ex) { return String(ex).replace(/^(HSPU|Handstand|Muscle-up) \((level|stage) \d+\): /, "").replace(/: (TEST|top set|back-off)$/, ""); }
+  function demoFor(ex) { var b = baseName(ex); for (var k = 0; k < DEMO_RULES.length; k++) if (DEMO_RULES[k][0].test(b)) return DEMO_RULES[k][1]; return null; }
+  function howUrl(name) {
+    var q = baseName(name);
+    if (q.indexOf(":") >= 0) { var parts = q.split(":"); q = parts[1] + " " + parts[0]; }
+    q = q.replace(/\([^)]*\)/g, " ").replace(/\b(EMOM|TEST)\b/g, " ").replace(/\b\d+(\.\d+)?\s*(-\s*\d+)?\s*(x|×)\s*\d+(\/side)?/gi, " ")
+      .replace(/\bx\s*\d+(\/side)?/gi, " ").replace(/\b\d+(-\d+)?\s*(min|s|sec|h)\b(\/side)?/gi, " ").replace(/\/side/g, " ").replace(/[+,;]/g, " ").replace(/\s+/g, " ").trim();
+    q = { row: "rowing machine technique", bike: "stationary bike warm up" }[q.toLowerCase()] || q;
+    return "https://www.youtube.com/results?search_query=" + encodeURIComponent(q + " how to");
+  }
+  function howTo(ex) {
+    var d = demoFor(ex), h = '<div class="howto">';
+    if (d) h += '<button class="demo" type="button" data-act="demo-zoom" aria-label="Show the demo larger">' +
+      '<img src="demos/' + d + '-0.jpg" alt="Start position" loading="lazy" width="360" height="240"><img src="demos/' + d + '-1.jpg" alt="End position" loading="lazy" width="360" height="240"></button>';
+    return h + '<a class="how" href="' + esc(howUrl(ex)) + '" target="_blank" rel="noopener">Watch how ↗</a></div>';
+  }
   var WEEKS = PLAN.weeks, PHASES = PLAN.phases;
   var EST = {};
   PLAN.metrics.forEach(function (m) { EST[m.key] = m.est; });
@@ -751,6 +781,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
     var h = '<article class="ex' + (done >= 0.99 ? " is-done" : "") + '" data-card="' + i + '">' +
       '<header class="ex-h"><span class="plate ' + plate + '" aria-hidden="true"></span><div class="ex-t"><div class="part">' + esc(it.part) + '</div><h3>' + esc(it.ex) + '</h3></div>' +
       '<span class="ex-state' + (done >= 0.99 ? " done" : "") + '">' + (done >= 0.99 ? "Done" : esc(stateTxt)) + '</span></header>';
+    if (t !== "run" && t !== "tt" && t !== "kegel" && t !== "list") h += howTo(it.ex);
 
     if (t === "sets") {
       var targetTxt = r.kind === "bar" ? r.load + " lb × " + r.reps : r.kind === "bw" ? r.reps + " reps" : String(r.reps || "") + (r.load && r.load !== "Bodyweight" ? " · " + r.load : "");
@@ -807,7 +838,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
       var need = kegelCount(it), k = L.k || [];
       h += '<div class="prev">' + esc(String(it.notes || "").replace(/\s*\d times today\.?$/, "")) + '</div><div class="sets">';
       var labels = need === 2 ? ["Morning", "Night"] : ["Morning", "Midday", "Night"];
-      for (var q = 0; q < need; q++) h += '<div class="set chk' + (k[q] ? " done" : "") + '"><span class="n">' + (q + 1) + '</span><span class="tg">' + labels[q] + ' session</span>' +
+      for (var q = 0; q < need; q++) h += '<div class="set chk kg' + (k[q] ? " done" : "") + '"><span class="n">' + (q + 1) + '</span><span class="tg">' + labels[q] + ' session</span>' +
         '<button class="tick" type="button" data-act="kegel" data-i="' + i + '" data-q="' + q + '" aria-pressed="' + (k[q] ? "true" : "false") + '" aria-label="' + labels[q] + ' session done"' + dis + '>' + ICON_CHECK + '</button></div>';
       return h + '</div></article>';
     } else if (t === "list") {
@@ -816,6 +847,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
       h += '<div class="sets">';
       it.subs.forEach(function (sub, si) {
         h += '<div class="set chk' + (c2[si] ? " done" : "") + '"><span class="n">' + (si + 1) + '</span><span class="tg">' + esc(sub) + '</span>' +
+          '<a class="how-mini" href="' + esc(howUrl(sub)) + '" target="_blank" rel="noopener" aria-label="How to do ' + esc(sub) + '">?</a>' +
           '<button class="tick" type="button" data-act="sub" data-i="' + i + '" data-s="' + si + '" aria-pressed="' + (c2[si] ? "true" : "false") + '" aria-label="' + esc(sub) + ' done"' + dis + '>' + ICON_CHECK + '</button></div>';
       });
       h += '</div>';
@@ -1069,6 +1101,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
       guide("Handstand push-up ladder", ["L1 wk 1-6: pike push-ups, chest-to-wall holds", "L2 wk 7-12: elevated pike, 30-45 s holds", "L3 wk 13-20: wall negatives, shoulder taps", "L4 wk 21-30: partial reps to a pad stack, toe/heel pulls", "L5 wk 31-40: full wall reps, 10-20 s free holds", "L6 wk 41-48: 2-4 wall reps, freestanding negatives", "L7 wk 49-52: freestanding attempts"]) +
       guide("Muscle-up ladder", ["Stage 1-2: hangs, scap pulls, negatives, swings", "Stage 3: explosive pull-ups, straight-bar dips", "Stage 4: chest-to-bar, band-assisted (needs 8 pull-ups + 5 bar dips)", "Stage 5: unassisted attempts (needs ~10 pull-ups + 3 chest-to-bar)", "Stage 6-7: EMOM singles, then clean reps"]) +
       guide("Kegels: how", ["Squeeze as if stopping urine and holding in gas, without clenching glutes, thighs or abs. Keep breathing", "Relax fully for as long as you held", "Reverse Kegel: gently let go and lengthen", "Don’t practise by actually stopping urine. Pain or symptoms: see a pelvic-floor physio"]) +
+      '<p class="small muted" style="margin:8px 0 0">Exercise photos: free-exercise-db (public domain). “Watch how” links open a YouTube search.</p>' +
       '</section>';
     return h;
   }
@@ -1220,7 +1253,8 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
     if (ev.target.closest("#sync")) { go("me"); return; }
     var b = ev.target.closest("[data-act]"); if (!b) return;
     var act = b.dataset.act;
-    if (act === "auth-skip") { prefSet("skipAuth", "1"); render(); }
+    if (act === "demo-zoom") { b.classList.toggle("big"); }
+    else if (act === "auth-skip") { prefSet("skipAuth", "1"); render(); }
     else if (act === "sync-now") { syncNow().then(render); }
     else if (act === "auth-signout") {
       var tok = state.session && state.session.access_token;
