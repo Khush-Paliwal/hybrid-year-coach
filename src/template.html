@@ -276,6 +276,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
   function dec(v) { return (typeof v === "string" && v.charAt(0) === "$") ? STR[+v.slice(1)] : v; }
   function decObj(o) { var r = {}; for (var k in o) { var v = o[k]; r[k] = Array.isArray(v) ? v.map(dec) : (v && typeof v === "object") ? decObj(v) : dec(v); } return r; }
   var DAYS = PLAN.days.map(function (d) { return { kind: d.k, session: dec(d.s), items: d.it.map(decObj) }; });
+  var BASE = (PLAN.base || []).map(function (d) { return { kind: d.k, session: dec(d.s), items: d.it.map(decObj) }; }); // Week 0: the 7 days before Week 1
 
   /* Exercise demos: start/end photos from free-exercise-db (public domain), flipped like a GIF. */
   var DEMO_RULES = JSON.parse(document.getElementById("demo-data").textContent).map(function (r) { return [new RegExp(r[0], "i"), r[1]]; });
@@ -311,8 +312,8 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
     { key: "k5", label: "5K time", unit: "time" }
   ];
   var TEST_COLS = [["w4", 4], ["w12", 12], ["w24", 24], ["w36", 36], ["w48", 48], ["w51", 51]];
-  var TEST_COL_FOR_WEEK = { 4: "w4", 12: "w12", 24: "w24", 36: "w36", 48: "w48", 51: "w51" };
-  var DEFAULT_SETTINGS = { startDate: "2026-10-26", age: 26, heightCm: 180, bodyweight: 183, goal5k: 1320, goalBench: 220.5, goalSquat: 275 };
+  var TEST_COL_FOR_WEEK = { 0: "start", 4: "w4", 12: "w12", 24: "w24", 36: "w36", 48: "w48", 51: "w51" };
+  var DEFAULT_SETTINGS = { startDate: "2026-11-02", age: 26, heightCm: 180, bodyweight: 183, goal5k: 1320, goalBench: 220.5, goalSquat: 275 };
   var LIFTS = { bench: /^Bench press/, squat: /^Back squat/, deadlift: /^Deadlift/, ohp: /^Overhead press/ };
   var LIFT_NAME = { bench: "Bench", squat: "Squat", deadlift: "Deadlift", ohp: "Press" };
   var MILESTONES = [
@@ -375,10 +376,14 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
   function planIndex(date) { return dayNum(date) - dayNum(state.settings.startDate); }
   function planDay(date) {
     var i = planIndex(date);
+    if (i < 0 && i >= -BASE.length) { var b = BASE[i + BASE.length]; return { idx: i, week: 0, offset: i + BASE.length, kind: b.kind, session: b.session, items: b.items }; }
     if (i < 0 || i >= DAYS.length) return null;
     var d = DAYS[i];
     return { idx: i, week: Math.floor(i / 7) + 1, offset: i % 7, kind: d.kind, session: d.session, items: d.items };
   }
+  function phaseLabel(w) { return w === 0 ? "Baseline" : PHASES[phaseIdx(w)].name; }
+  function weekTypeLabel(w) { return w === 0 ? "Baseline week" : WEEKS[w - 1].type; }
+  var BASE_FOCUS = "Submaximal top sets and max-rep tests. Each result you save becomes your starting number, so Week 1 weights fit you.";
   function weekStart(w) { return addDays(state.settings.startDate, (w - 1) * 7); }
   function testVal(key, col) { var t = state.tests[key]; var v = t ? t[col] : null; return (v === null || v === undefined || v === "") ? null : Number(v); }
   function est(key) { var t = state.tests[key]; if (t && t.start != null && t.start !== "") return Number(t.start); return EST[key]; }
@@ -733,24 +738,25 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
   /* ------------------------------------------------------------ views */
   function pickInitialDate() {
     var t = today(), i = planIndex(t);
-    if (i < 0) state.date = addDays(state.settings.startDate, 1);
+    if (i < -BASE.length) state.date = addDays(state.settings.startDate, 1 - BASE.length);
     else if (i >= DAYS.length) state.date = addDays(state.settings.startDate, DAYS.length - 1);
     else state.date = t;
   }
 
   function renderToday() {
     var date = state.date, pd = planDay(date), t = today(), h = "";
-    var weekTxt = pd ? ["Week " + pd.week, PHASES[phaseIdx(pd.week)].name, WEEKS[pd.week - 1].type].filter(function (x, ix, a) { return a.indexOf(x) === ix && x !== "Training"; }).join(" · ") : "Outside the plan";
+    var weekTxt = pd && pd.week === 0 ? "Week 0 · Baseline week" : pd ? ["Week " + pd.week, phaseLabel(pd.week), weekTypeLabel(pd.week)].filter(function (x, ix, a) { return a.indexOf(x) === ix && x !== "Training"; }).join(" · ") : "Outside the plan";
     h += '<section class="daynav"><button class="iconbtn" type="button" data-act="day-prev" aria-label="Previous day">' + ICON_L + '</button>' +
       '<div class="daytitle"><div class="eyebrow">' + esc(weekTxt) + '</div><h1>' + esc(fmtDate(date, { weekday: "long", day: "numeric", month: "short" })) + '</h1></div>' +
       '<button class="iconbtn" type="button" data-act="day-next" aria-label="Next day">' + ICON_R + '</button></section>';
     var si = planIndex(t);
-    if (si < 0 && date >= state.settings.startDate) {
-      h += '<div class="banner"><span>Your plan starts ' + esc(fmtDate(addDays(state.settings.startDate, 1), { weekday: "long", day: "numeric", month: "long" })) + ' (in ' + (-si + 1) + ' days). This is a preview of your first sessions.</span></div>';
+    var firstDay = addDays(state.settings.startDate, 1 - BASE.length);
+    if (si < -BASE.length && date >= addDays(state.settings.startDate, -BASE.length)) {
+      h += '<div class="banner"><span>Your baseline week starts ' + esc(fmtDate(firstDay, { weekday: "long", day: "numeric", month: "long" })) + ' (in ' + (dayNum(firstDay) - dayNum(t)) + ' days). This is a preview.</span></div>';
     } else if (date !== t) {
       h += '<div class="banner warn"><span>You are looking at ' + (date < t ? "a past" : "a future") + ' day.</span><button type="button" data-act="day-today">Back to today</button></div>';
     }
-    if (!pd) { h += '<section class="panel"><p class="muted">No session planned for this date. The plan runs ' + esc(fmtDate(state.settings.startDate, { day: "numeric", month: "short", year: "numeric" })) + ' to ' + esc(fmtDate(addDays(state.settings.startDate, DAYS.length - 1), { day: "numeric", month: "short", year: "numeric" })) + '.</p></section>'; return h; }
+    if (!pd) { h += '<section class="panel"><p class="muted">No session planned for this date. The plan runs ' + esc(fmtDate(addDays(state.settings.startDate, -BASE.length), { day: "numeric", month: "short", year: "numeric" })) + ' to ' + esc(fmtDate(addDays(state.settings.startDate, DAYS.length - 1), { day: "numeric", month: "short", year: "numeric" })) + '.</p></section>'; return h; }
 
     var prog = dayProgress(date, pd), st = dayStatus(date), d = getDay(date);
     h += '<section class="panel"><div class="row"><div class="eyebrow">' + (pd.kind === "rest" ? "Recovery day" : pd.kind === "test" ? "Test day" : "Session") + '</div>' +
@@ -832,7 +838,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
           '<div class="row"><span class="result small muted">' + (cur != null ? "Saved: " + cur + " reps" : "One all-out set") + '</span>' +
           '<button class="donebtn" type="button" data-act="savetest" data-i="' + i + '" data-key="' + key + '" aria-pressed="' + (L.v != null ? "true" : "false") + '"' + dis + '>' + ICON_CHECK + 'Save result</button></div>';
       }
-      if (cur != null && col2) h += '<div class="small muted">Week ' + w + ' result on file: <b>' + (key === "k5" ? mmss(cur) : cur + (isBar ? " lb" : " reps")) + '</b></div>';
+      if (cur != null && col2) h += '<div class="small muted">' + (w === 0 ? "Starting number on file" : "Week " + w + " result on file") + ': <b>' + (key === "k5" ? mmss(cur) : cur + (isBar ? " lb" : " reps")) + '</b></div>';
       return h + '</article>';
     } else if (t === "kegel") {
       var need = kegelCount(it), k = L.k || [];
@@ -887,16 +893,16 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
   }
 
   function renderPlan() {
-    var cur = planDay(today()), w = state.weekView || (cur ? cur.week : 1);
+    var cur = planDay(today()), w = state.weekView != null ? state.weekView : (cur ? cur.week : 0);
     state.weekView = w;
-    var ws = weekStart(w), we = addDays(ws, 6), ph = PHASES[phaseIdx(w)];
+    var ws = weekStart(w), we = addDays(ws, 6), ph = w === 0 ? { name: "Baseline", focus: BASE_FOCUS } : PHASES[phaseIdx(w)];
     var h = '<section class="weekhead"><button class="iconbtn" type="button" data-act="week-prev" aria-label="Previous week">' + ICON_L + '</button>' +
       '<div><h1>Week ' + w + '</h1><div class="eyebrow" style="text-align:center">' + esc(fmtDate(ws, { day: "numeric", month: "short" }) + " – " + fmtDate(we, { day: "numeric", month: "short" })) + '</div></div>' +
       '<button class="iconbtn" type="button" data-act="week-next" aria-label="Next week">' + ICON_R + '</button></section>';
     h += '<div class="phasebar" aria-hidden="true">';
     for (var k = 1; k <= 52; k++) h += '<span style="flex:1" class="' + (k === w ? "on" : (cur && k < cur.week ? "past" : "")) + '"></span>';
     h += '</div>';
-    h += '<section class="panel"><div class="chips"><span class="chip accent">' + esc(ph.name) + '</span><span class="chip">' + esc(WEEKS[w - 1].type) + '</span></div><p class="small muted" style="margin:0">' + esc(ph.focus) + '</p>';
+    h += '<section class="panel"><div class="chips"><span class="chip accent">' + esc(ph.name) + '</span><span class="chip">' + esc(weekTypeLabel(w)) + '</span></div><p class="small muted" style="margin:0">' + esc(ph.focus) + '</p>';
     h += '<div class="daylist">';
     for (var o = 0; o < 7; o++) {
       var date = addDays(ws, o), pd = planDay(date), st = dayStatus(date);
@@ -1070,7 +1076,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
     } else {
       h = renderAuth(true);
     }
-    h += '<section class="panel"><h2>Test results</h2><p class="small muted" style="margin:0">Enter results after each test week. Weights, rep targets and paces for the next block update automatically. 5K as mm:ss.</p><div class="tablewrap"><table><thead><tr><th>Metric</th><th>Start</th>' + TEST_COLS.map(function (c) { return "<th>Wk " + c[1] + "</th>"; }).join("") + '</tr></thead><tbody>' +
+    h += '<section class="panel"><h2>Test results</h2><p class="small muted" style="margin:0">Enter results after each test week. Weights, rep targets and paces for the next block update automatically. 5K as mm:ss.</p><div class="tablewrap"><table><thead><tr><th>Metric</th><th>Wk 0 / start</th>' + TEST_COLS.map(function (c) { return "<th>Wk " + c[1] + "</th>"; }).join("") + '</tr></thead><tbody>' +
       METRICS.map(function (m) {
         var row = '<tr><td>' + esc(m.label) + '</td>';
         ["start"].concat(TEST_COLS.map(function (c) { return c[0]; })).forEach(function (col) {
@@ -1117,7 +1123,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
     v.innerHTML = html;
     document.querySelectorAll(".tab").forEach(function (b) { if (b.dataset.tab === state.tab) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
     var pd = planDay(today());
-    document.getElementById("hdr-sub").textContent = pd ? "Week " + pd.week + " of 52 · " + PHASES[phaseIdx(pd.week)].name : planIndex(today()) < 0 ? "Starts " + fmtDate(addDays(state.settings.startDate, 1), { day: "numeric", month: "short" }) : "Plan complete";
+    document.getElementById("hdr-sub").textContent = pd ? (pd.week === 0 ? "Week 0 · Baseline" : "Week " + pd.week + " of 52 · " + phaseLabel(pd.week)) : planIndex(today()) < 0 ? "Starts " + fmtDate(addDays(state.settings.startDate, 1 - BASE.length), { day: "numeric", month: "short" }) : "Plan complete";
     setSync(state.syncText, state.syncCls);
     if (keepScroll) window.scrollTo(0, y); else window.scrollTo(0, 0);
   }
@@ -1145,8 +1151,8 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
       case "day-next": state.date = addDays(state.date, 1); state.dateTouched = true; render(); break;
       case "day-today": state.date = today(); state.dateTouched = true; render(); break;
       case "open-day": state.date = b.dataset.date; state.dateTouched = true; go("today"); break;
-      case "week-prev": state.weekView = Math.max(1, (state.weekView || 1) - 1); render(); break;
-      case "week-next": state.weekView = Math.min(52, (state.weekView || 1) + 1); render(); break;
+      case "week-prev": state.weekView = Math.max(BASE.length ? 0 : 1, (state.weekView || 0) - 1); render(); break;
+      case "week-next": state.weekView = Math.min(52, (state.weekView || 0) + 1); render(); break;
       case "week-now": state.weekView = null; render(); break;
       case "timer-minus": timer.end -= 15000; tick(); break;
       case "timer-plus": timer.end += 15000; timer.total += 15; tick(); break;
