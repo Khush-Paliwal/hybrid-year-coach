@@ -796,7 +796,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
       var prev = previousFor(it.ex, date);
       if (prev) h += '<div class="prev">Last time (' + esc(fmtDate(prev.date, { day: "numeric", month: "short" })) + '): ' + esc(prev.sets.map(function (s) { return (s.w ? s.w + "×" : "") + (s.r || "–"); }).join(" · ")) + '</div>';
       var ww = wantsWeight(it, r), n = Math.max(r.sets, (L.sets || []).length);
-      h += '<div class="sets"><div class="set set-h' + (ww ? "" : " nw") + '"><span>Set</span><span>Target</span>' + (ww ? '<span>' + (r.kind === "bar" ? "lb" : "+lb") + '</span>' : "") + '<span>' + (/ s\b|s\/side|s$/.test(String(r.reps)) ? "Sec" : "Reps") + '</span><span></span></div>';
+      h += '<div class="sets"><div class="set set-h' + (ww ? "" : " nw") + '"><span>Set</span><span>Target</span>' + (ww ? '<span>' + (/^Weighted/i.test(it.ex) ? "+lb" : "lb") + '</span>' : "") + '<span>' + (/ s\b|s\/side|s$/.test(String(r.reps)) ? "Sec" : "Reps") + '</span><span></span></div>';
       for (var s = 0; s < n; s++) {
         var S = (L.sets || [])[s] || {}, pw = prev && prev.sets[s] ? prev.sets[s].w : "";
         var wph = r.kind === "bar" ? r.load : (pw || "");

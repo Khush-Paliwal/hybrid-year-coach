@@ -38,6 +38,8 @@ RULES = [
     ("^ab wheel", "Ab_Roller"),
     ("^hanging leg raise", "Hanging_Leg_Raise"),
     ("^lat pulldown", "Wide-Grip_Lat_Pulldown"),
+    ("^incline db curl", "Incline_Dumbbell_Curl"),
+    ("^hammer curl", "Hammer_Curls"),
     ("scap pull-up", "Scapular_Pull-Up"),
     ("muscle-up", "Muscle_Up"),
     ("hspu|handstand push", "Handstand_Push-Ups"),
