@@ -282,8 +282,12 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
   var DEMO_RULES = JSON.parse(document.getElementById("demo-data").textContent).map(function (r) { return [new RegExp(r[0], "i"), r[1]]; });
   function baseName(ex) { return String(ex).replace(/^(HSPU|Handstand|Muscle-up) \((level|stage) \d+\): /, "").replace(/: (TEST|top set|back-off)$/, ""); }
   function demoFor(ex) { var b = baseName(ex); for (var k = 0; k < DEMO_RULES.length; k++) if (DEMO_RULES[k][0].test(b)) return DEMO_RULES[k][1]; return null; }
+  var CURATED_HOW = [[/^kegels?\b/i, "kegel exercises for men how to"], [/^slow kegel/i, "kegel exercises for men slow holds"],
+    [/^quick-flick/i, "quick flick kegel exercises for men"], [/^reverse kegel/i, "reverse kegel for men how to"],
+    [/^the knack/i, "the knack pelvic floor exercise"]];
   function howUrl(name) {
     var q = baseName(name);
+    for (var c = 0; c < CURATED_HOW.length; c++) if (CURATED_HOW[c][0].test(q)) return "https://www.youtube.com/results?search_query=" + encodeURIComponent(CURATED_HOW[c][1]);
     if (q.indexOf(":") >= 0) { var parts = q.split(":"); q = parts[1] + " " + parts[0]; }
     q = q.replace(/\([^)]*\)/g, " ").replace(/\b(EMOM|TEST)\b/g, " ").replace(/\b\d+(\.\d+)?\s*(-\s*\d+)?\s*(x|×)\s*\d+(\/side)?/gi, " ")
       .replace(/\bx\s*\d+(\/side)?/gi, " ").replace(/\b\d+(-\d+)?\s*(min|s|sec|h)\b(\/side)?/gi, " ").replace(/\/side/g, " ").replace(/[+,;]/g, " ").replace(/\s+/g, " ").trim();
@@ -787,7 +791,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
     var h = '<article class="ex' + (done >= 0.99 ? " is-done" : "") + '" data-card="' + i + '">' +
       '<header class="ex-h"><span class="plate ' + plate + '" aria-hidden="true"></span><div class="ex-t"><div class="part">' + esc(it.part) + '</div><h3>' + esc(it.ex) + '</h3></div>' +
       '<span class="ex-state' + (done >= 0.99 ? " done" : "") + '">' + (done >= 0.99 ? "Done" : esc(stateTxt)) + '</span></header>';
-    if (t !== "run" && t !== "tt" && t !== "kegel" && t !== "list") h += howTo(it.ex);
+    if (t !== "run" && t !== "tt" && t !== "kegel" && (t !== "list" || it.part === "Daily")) h += howTo(it.ex);
 
     if (t === "sets") {
       var targetTxt = r.kind === "bar" ? r.load + " lb × " + r.reps : r.kind === "bw" ? r.reps + " reps" : String(r.reps || "") + (r.load && r.load !== "Bodyweight" ? " · " + r.load : "");
