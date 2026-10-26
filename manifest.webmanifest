@@ -1,7 +1,7 @@
 {
   "name": "Hybrid Year Coach",
   "short_name": "Coach",
-  "description": "Daily workout, food and progress log for a 52-week hybrid training plan.",
+  "description": "Daily workout, food and progress log for a 52-week hybrid training plan, plus a day-by-day study checklist.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

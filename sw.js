@@ -1,5 +1,5 @@
 /* Offline support: the app shell is cached; the page itself is fetched fresh when online. Supabase calls are never cached. */
-const CACHE = "coach-v1";
+const CACHE = "coach-v2";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png"];
 
 self.addEventListener("install", (event) => {

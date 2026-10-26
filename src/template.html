@@ -229,6 +229,38 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
 .tab svg { width: 22px; height: 22px; }
 .tab[aria-current="page"] { color: var(--accent); }
 .empty { color: var(--muted); font-size: 14px; padding: 8px 0; }
+
+/* Start screen (Study or Exercise) and the Study checklist */
+.brandrow { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.iconbtn.sm { width: 38px; height: 38px; border-radius: 10px; flex: none; }
+.home { display: flex; flex-direction: column; gap: 14px; }
+.home h1 { font-family: var(--font-display); font-size: 34px; line-height: 1.05; font-weight: 700; }
+.choice { display: grid; grid-template-columns: 56px minmax(0, 1fr) 20px; gap: 14px; align-items: center; width: 100%; text-align: left; padding: 20px 16px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface); }
+.choice .ico { width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
+.choice.study .ico { background: var(--warn-soft); color: var(--warn); }
+.choice .ico svg { width: 30px; height: 30px; }
+.choice b { display: block; font-family: var(--font-display); font-size: 28px; line-height: 1.05; }
+.choice .sub { display: block; font-size: 13px; color: var(--muted); margin-top: 2px; overflow-wrap: anywhere; }
+.choice .chev { color: var(--faint); }
+.choice .chev svg { width: 20px; height: 20px; }
+.blockh { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 4px 2px 0; }
+.blockh h2 { font-family: var(--font-display); font-size: 21px; font-weight: 700; }
+.src { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+.src a { color: var(--accent); text-decoration: none; font-weight: 600; }
+.ncrow { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
+.ncrow:first-child { border-top: 0; }
+.ncrow .nn { font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--muted); text-align: center; }
+.ncrow b { font-weight: 600; overflow-wrap: anywhere; }
+.ncrow .small { display: block; }
+details.ncd { border-top: 1px solid var(--line); }
+details.ncd:first-child { border-top: 0; }
+details.ncd > summary { list-style: none; cursor: pointer; border-top: 0; }
+details.ncd > summary::-webkit-details-marker { display: none; }
+.ncbody { display: flex; flex-direction: column; gap: 10px; padding: 0 0 14px 44px; }
+.field.area { height: auto; min-height: 120px; padding: 10px 12px; text-align: left; line-height: 1.45; resize: vertical; font-variant-numeric: normal; font-size: 15px; }
+.set.part-done .tg { font-weight: 600; }
+.gate { display: flex; flex-direction: column; gap: 6px; padding: 12px 0; border-top: 1px solid var(--line); }
+.gate:first-child { border-top: 0; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 @media (max-width: 380px) {
   .set { grid-template-columns: 22px minmax(0, 1fr) 62px 54px 42px; gap: 6px; }
@@ -240,7 +272,10 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
 
 <div class="wrap">
   <header class="top">
-    <div class="brand">Hybrid Year<small id="hdr-sub">52-week plan</small></div>
+    <div class="brandrow">
+      <button class="iconbtn sm" type="button" id="homebtn" data-act="home" aria-label="Back to Study or Exercise" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg></button>
+      <div class="brand"><span id="hdr-title">Hybrid Year</span><small id="hdr-sub">52-week plan</small></div>
+    </div>
     <span class="sync" id="sync"><i></i><span>Loading</span></span>
   </header>
   <main id="view" aria-live="polite"></main>
@@ -254,8 +289,15 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
     <div class="timer-bar"><span id="timer-bar"></span></div>
   </div>
 </div>
-<nav class="tabs" aria-label="Sections">
-  <div class="tabs-in">
+<nav class="tabs" id="tabs" aria-label="Sections">
+  <div class="tabs-in" id="tabs-st" hidden>
+    <button class="tab" type="button" data-stab="today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>Today</button>
+    <button class="tab" type="button" data-stab="week"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Week</button>
+    <button class="tab" type="button" data-stab="progress"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16M6 15l4-4 3 3 5-6"/></svg>Progress</button>
+    <button class="tab" type="button" data-stab="lc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>NeetCode</button>
+    <button class="tab" type="button" data-stab="me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 20c1.5-3.5 4.3-5 7.5-5s6 1.5 7.5 5"/></svg>Me</button>
+  </div>
+  <div class="tabs-in" id="tabs-ex">
     <button class="tab" type="button" data-tab="today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5v11M17.5 6.5v11M3 9.5v5M21 9.5v5M6.5 12h11"/></svg>Today</button>
     <button class="tab" type="button" data-tab="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Plan</button>
     <button class="tab" type="button" data-tab="progress"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16M6 15l4-4 3 3 5-6"/></svg>Progress</button>
@@ -266,6 +308,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
 
 <script id="plan-data" type="application/json">__PLAN_JSON__</script>
 <script id="demo-data" type="application/json">__DEMO_JSON__</script>
+<script id="study-data" type="application/json">__STUDY_JSON__</script>
 <script>
 (function () {
   "use strict";
@@ -277,6 +320,24 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
   function decObj(o) { var r = {}; for (var k in o) { var v = o[k]; r[k] = Array.isArray(v) ? v.map(dec) : (v && typeof v === "object") ? decObj(v) : dec(v); } return r; }
   var DAYS = PLAN.days.map(function (d) { return { kind: d.k, session: dec(d.s), items: d.it.map(decObj) }; });
   var BASE = (PLAN.base || []).map(function (d) { return { kind: d.k, session: dec(d.s), items: d.it.map(decObj) }; }); // Week 0: the 7 days before Week 1
+
+  /* Study plan: exported from study_tracker.xlsx by tools/build_study.py. One checklist per day: 4 h of study + one NeetCode problem. */
+  var SP = JSON.parse(document.getElementById("study-data").textContent);
+  function sdec(v) { return (typeof v === "string" && v.charAt(0) === "$") ? SP.strings[+v.slice(1)] : v; }
+  var STASK = {};
+  Object.keys(SP.tasks).forEach(function (k) {
+    var t = SP.tasks[k];
+    STASK[k] = { track: sdec(t[0]), text: sdec(t[1]), src: sdec(t[2]), hours: t[3], title: sdec(t[4] || "") || sdec(t[1]), steps: (t[5] || []).map(sdec), tip: sdec(t[6] || "") };
+  });
+  var SDAYS = SP.days.map(function (d) {
+    return { week: d[0], phase: SP.phases[d[1]], rows: d[2].map(function (r) { return { block: sdec(r[0]), tid: r[1], est: r[2], part: r[3], nparts: r[4], key: r[1] + (r[3] ? "#" + r[3] : "") }; }) };
+  });
+  var SNC = SP.nc.map(function (p) { return { num: p[0], pattern: sdec(p[1]), name: p[2], diff: sdec(p[3]), before: !!p[4], p1: p[5], p2: p[6], link: p[7], premium: !!p[8], note: p[9], shaky: !!p[10] }; });
+  var SGATES = SP.gates.map(function (g) { return { id: g[0], type: sdec(g[1]), name: g[2], key: g[3], unlocks: g[4], date: g[5], deps: g[6], test: g[7], fail: g[8] }; });
+  var STID_ROWS = {}; // task id -> every [date, row key] it occupies (split tasks have several)
+  SDAYS.forEach(function (sd, ix) { sd.rows.forEach(function (r) { (STID_ROWS[r.tid] = STID_ROWS[r.tid] || []).push([ix, r.key]); }); });
+  var STRACKS = ["Strang 18.06", "MIT 18.02", "Stat 110", "Wasserman", "Boyd", "Gate check", "ISLP", "ESL", "Tsay", "Buffer", "Review"];
+  var TRACK_PLATE = { "Strang 18.06": "blue", "MIT 18.02": "green", "Stat 110": "red", Wasserman: "yellow", Boyd: "yellow", "Gate check": "yellow", ISLP: "green", ESL: "blue", Tsay: "red", LeetCode: "yellow" };
 
   /* Exercise demos: start/end photos from free-exercise-db (public domain), flipped like a GIF. */
   var DEMO_RULES = JSON.parse(document.getElementById("demo-data").textContent).map(function (r) { return [new RegExp(r[0], "i"), r[1]]; });
@@ -334,7 +395,13 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
 
   /* ------------------------------------------------------------ state */
   var state = {
+    section: "home", // home | exercise | study
     tab: "today",
+    stab: "today",
+    sdate: null,
+    sweek: null,
+    ncFilter: "all",
+    study: {},
     date: null,
     weekView: null,
     lift: "bench",
@@ -525,6 +592,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
     if (path === "app/tests") return state.tests;
     if (path === "app/milestones") return state.milestones;
     if (path.indexOf("days/") === 0) return state.days[path.slice(5)] || null;
+    if (path.indexOf("study/") === 0) return state.study[path.slice(6)] || null;
     return null;
   }
   function applyPath(path, data) {
@@ -532,9 +600,10 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
     else if (path === "app/tests") state.tests = clone(data || {});
     else if (path === "app/milestones") state.milestones = clone(data || {});
     else if (path.indexOf("days/") === 0) state.days[path.slice(5)] = clone(data || {});
+    else if (path.indexOf("study/") === 0) state.study[path.slice(6)] = clone(data || {});
   }
   function saveLocal() {
-    try { localStorage.setItem(LKEY, JSON.stringify({ settings: state.settingsCustom ? state.settings : null, settingsSaved: !!state.settingsCustom, tests: state.tests, milestones: state.milestones, days: state.days, outbox: Object.keys(outbox), lastSync: state.lastSync || null })); }
+    try { localStorage.setItem(LKEY, JSON.stringify({ settings: state.settingsCustom ? state.settings : null, settingsSaved: !!state.settingsCustom, tests: state.tests, milestones: state.milestones, days: state.days, study: state.study, outbox: Object.keys(outbox), lastSync: state.lastSync || null })); }
     catch (e) { setSync("Phone storage full", "err"); }
   }
   function loadLocal() {
@@ -543,7 +612,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
       var o = JSON.parse(raw);
       // Settings are kept only once you've changed them (or they came from the cloud), so new defaults reach the phone.
       if (o.settings && o.settingsSaved) { state.settings = Object.assign({}, DEFAULT_SETTINGS, o.settings); state.settingsCustom = true; }
-      state.tests = o.tests || {}; state.milestones = o.milestones || {}; state.days = o.days || {};
+      state.tests = o.tests || {}; state.milestones = o.milestones || {}; state.days = o.days || {}; state.study = o.study || {};
       (o.outbox || []).forEach(function (p) { outbox[p] = true; outboxVer[p] = 1; });
       state.lastSync = o.lastSync || null;
     } catch (e) { /* ignore */ }
@@ -679,7 +748,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
     loadLocal(); state.loaded = true; state.mode = "cloud";
     var fromLink = handleAuthRedirect();
     state.session = state.session || loadSession();
-    if (fromLink && state.recovery) state.tab = "me";
+    if (fromLink && state.recovery) { state.section = "exercise"; state.tab = "me"; }
     if (!state.dateTouched) pickInitialDate();
     if (!state.session) { setSync(Object.keys(outbox).length ? "Saved on phone" : "Not signed in", ""); render(); return; }
     render();
@@ -1066,20 +1135,20 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
     return h;
   }
 
+  function renderSyncPanel() {
+    if (!state.session) return renderAuth(true);
+    return '<section class="panel"><h2>Sync</h2>' + (state.authMsg ? '<div class="banner"><span>' + esc(state.authMsg) + '</span></div>' : '') +
+      '<p class="small muted" style="margin:0">Signed in as <b>' + esc((state.session.user && state.session.user.email) || "you") + '</b>. Everything saves on this phone first and syncs to your private database when you’re online' +
+      (state.lastSync ? ' (last sync ' + esc(new Date(state.lastSync).toLocaleString(undefined, { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })) + ')' : '') + '. ' +
+      (Object.keys(outbox).length ? Object.keys(outbox).length + ' change(s) waiting to upload.' : 'Nothing waiting to upload.') + '</p>' +
+      (state.recovery ? '<form data-form="newpass" class="items"><label class="lab">New password<input class="field wide" id="new-pass" type="password" autocomplete="new-password" minlength="8" required></label><button class="primary" type="submit">Save new password</button></form>' : '') +
+      '<div class="btnrow"><button class="secondary" type="button" data-act="sync-now">Sync now</button><button class="secondary" type="button" data-act="auth-signout">Sign out</button></div></section>';
+  }
+
   function renderMe() {
     var s = state.settings, dis = state.loaded && !state.readOnly ? "" : " disabled";
     var cur = planDay(today()), w = cur ? cur.week : 1, P = paces(w);
-    var h;
-    if (state.session) {
-      h = '<section class="panel"><h2>Sync</h2>' + (state.authMsg ? '<div class="banner"><span>' + esc(state.authMsg) + '</span></div>' : '') +
-        '<p class="small muted" style="margin:0">Signed in as <b>' + esc((state.session.user && state.session.user.email) || "you") + '</b>. Everything saves on this phone first and syncs to your private database when you’re online' +
-        (state.lastSync ? ' (last sync ' + esc(new Date(state.lastSync).toLocaleString(undefined, { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })) + ')' : '') + '. ' +
-        (Object.keys(outbox).length ? Object.keys(outbox).length + ' change(s) waiting to upload.' : 'Nothing waiting to upload.') + '</p>' +
-        (state.recovery ? '<form data-form="newpass" class="items"><label class="lab">New password<input class="field wide" id="new-pass" type="password" autocomplete="new-password" minlength="8" required></label><button class="primary" type="submit">Save new password</button></form>' : '') +
-        '<div class="btnrow"><button class="secondary" type="button" data-act="sync-now">Sync now</button><button class="secondary" type="button" data-act="auth-signout">Sign out</button></div></section>';
-    } else {
-      h = renderAuth(true);
-    }
+    var h = renderSyncPanel();
     h += '<section class="panel"><h2>Test results</h2><p class="small muted" style="margin:0">Enter results after each test week. Weights, rep targets and paces for the next block update automatically. 5K as mm:ss.</p><div class="tablewrap"><table><thead><tr><th>Metric</th><th>Wk 0 / start</th>' + TEST_COLS.map(function (c) { return "<th>Wk " + c[1] + "</th>"; }).join("") + '</tr></thead><tbody>' +
       METRICS.map(function (m) {
         var row = '<tr><td>' + esc(m.label) + '</td>';
@@ -1117,17 +1186,279 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
   }
   function guide(title, items) { return '<details class="guide"><summary>' + esc(title) + '</summary><ul>' + items.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + '</ul></details>'; }
 
+  /* ------------------------------------------------------------ study plan */
+  var ICON_BOOK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H20v16H5.5A1.5 1.5 0 0 0 4 20.5zM4 20.5A1.5 1.5 0 0 0 5.5 22H20M8 7.5h8M8 11h6"/></svg>';
+  var ICON_LIFT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5v11M17.5 6.5v11M3 9.5v5M21 9.5v5M6.5 12h11"/></svg>';
+  function sIndex(date) { return dayNum(date) - dayNum(SP.start); }
+  function sDay(date) { var i = sIndex(date); return i >= 0 && i < SDAYS.length ? SDAYS[i] : null; }
+  function sDateAt(ix) { return addDays(SP.start, ix); }
+  function pickStudyDate() { var t = today(); return t < SP.start ? SP.start : t > SP.end ? SP.end : t; }
+  function sEnsure(date) { var d = state.study[date]; if (!d) d = state.study[date] = { items: {} }; if (!d.items) d.items = {}; return d; }
+  function sItem(date, key) { var d = sEnsure(date); if (!d.items[key]) d.items[key] = {}; return d.items[key]; }
+  function sPeek(date, key) { var d = state.study[date]; return d && d.items ? d.items[key] || null : null; }
+  function sTouch(date) { sEnsure(date).updatedAt = new Date().toISOString(); scheduleSave("study/" + date, function () { return state.study[date]; }); }
+  function isLC(r) { return r.block.indexOf("LC") === 0; }
+  function sDone(date, r) { var L = sPeek(date, r.key); return !!(L && L.d); }
+  function sHours(date, sd) { var h = { plan: 0, done: 0 }; sd.rows.forEach(function (r) { if (isLC(r)) return; h.plan += r.est; if (sDone(date, r)) h.done += r.est; }); return h; }
+  function sTracks(sd) { var out = []; sd.rows.forEach(function (r) { var t = STASK[r.tid]; if (!isLC(r) && t && out.indexOf(t.track) < 0) out.push(t.track); }); return out; }
+  function sStatus(date) {
+    var sd = sDay(date); if (!sd) return { label: "", cls: "" };
+    var h = sHours(date, sd), p = h.plan ? h.done / h.plan : 0;
+    if (p >= 0.999) return { label: "Done", cls: "good" };
+    if (p > 0) return { label: Math.round(p * 100) + "%", cls: "warn" };
+    if (date < today()) return { label: "Not done", cls: "bad" };
+    if (date === today()) return { label: "Today", cls: "accent" };
+    return { label: "", cls: "" };
+  }
+  function taskDone(tid) { var rows = STID_ROWS[tid] || []; return rows.length > 0 && rows.every(function (x) { var L = sPeek(sDateAt(x[0]), x[1]); return !!(L && L.d); }); }
+  function fmtH(h) { return (Math.round(h * 100) / 100) + " h"; }
+  function phaseShort(p) { return String(p || "").replace(/^\d+ /, ""); }
+  function shortUrl(u) {
+    var m = u.match(/^https?:\/\/([^\/]+)(\/[^?#]*)?/); if (!m) return u;
+    var last = (m[2] || "").replace(/\/$/, "").split("/").pop();
+    return m[1].replace(/^www\./, "") + (last ? "/…/" + (last.length > 30 ? last.slice(0, 28) + "…" : last) : "");
+  }
+  function linkify(s) {
+    return esc(s).replace(/https?:\/\/[^\s|]+/g, function (u) {
+      var trail = (u.match(/[).,;]+$/) || [""])[0]; u = u.slice(0, u.length - trail.length);
+      return '<a href="' + u + '" target="_blank" rel="noopener">' + esc(shortUrl(u.replace(/&amp;/g, "&"))) + ' ↗</a>' + trail;
+    });
+  }
+  function ncFor(tid) { var m = String(tid).match(/^LC2?-0*(\d+)$/); return m ? SNC.filter(function (p) { return p.num === Number(m[1]); })[0] : null; }
+  function ncLog(num) { return (state.study.nc || {})[num] || {}; }
+
+  /* Tick marks. Each task is a list of steps; ticks live on the day you tick them, and every part of a split task shows the same
+     ticks. A row counts as done when all of its task's steps are ticked, or (split tasks) when that day's part is ticked. */
+  function stepsFor(tid) {
+    if (/^LC2-/.test(tid)) return ["Re-solve it from blank (20-min cap)", "Compare with your write-up below and sharpen it"];
+    if (/^LC-/.test(tid)) {
+      var p = ncFor(tid), cap = p ? ({ Easy: 15, Medium: 25, Hard: 30 }[p.diff] || 25) : 25;
+      return ["Attempt it on your own (" + cap + "-min cap)", "Get to a working solution: if stuck, study the NeetCode solution, then re-code it from blank", "Write the algorithm in your own words below"];
+    }
+    var T = STASK[tid];
+    return T && T.steps.length ? T.steps : [T ? T.title : tid];
+  }
+  function stepOn(tid, s) {
+    var rows = STID_ROWS[tid] || [];
+    for (var j = 0; j < rows.length; j++) { var L = sPeek(sDateAt(rows[j][0]), rows[j][1]); if (L && L.c && L.c[s]) return true; }
+    return false;
+  }
+  function stepsTicked(tid) { var n = stepsFor(tid).length, c = 0; for (var s = 0; s < n; s++) if (stepOn(tid, s)) c++; return c; }
+  function refreshDone(tid) {
+    var all = stepsTicked(tid) === stepsFor(tid).length;
+    (STID_ROWS[tid] || []).forEach(function (x) {
+      var dt = sDateAt(x[0]), L = sPeek(dt, x[1]), want = all || !!(L && L.p);
+      if (!!(L && L.d) === want) return;
+      L = L || sItem(dt, x[1]); L.d = want; L.at = want ? new Date().toISOString() : null; sTouch(dt);
+    });
+  }
+  function toggleStep(date, key, tid, s) {
+    if (stepOn(tid, s)) {
+      (STID_ROWS[tid] || []).forEach(function (x) { var dt = sDateAt(x[0]), L = sPeek(dt, x[1]); if (L && L.c && L.c[s]) { L.c[s] = false; sTouch(dt); } });
+    } else {
+      var L = sItem(date, key); L.c = L.c || []; for (var z = 0; z < s; z++) L.c[z] = !!L.c[z]; L.c[s] = true; sTouch(date);
+    }
+    refreshDone(tid);
+  }
+  function stepRows(key, tid, dis) {
+    return stepsFor(tid).map(function (st, s) {
+      var on = stepOn(tid, s);
+      return '<div class="set chk kg' + (on ? " done" : "") + '"><span class="n">' + (s + 1) + '</span><span class="tg">' + esc(st) + '</span>' +
+        '<button class="tick" type="button" data-act="sstep" data-key="' + esc(key) + '" data-tid="' + esc(tid) + '" data-s="' + s + '" aria-pressed="' + (on ? "true" : "false") + '" aria-label="' + esc(st) + ' done"' + dis + '>' + ICON_CHECK + '</button></div>';
+    }).join("");
+  }
+
+  function renderHome() {
+    var t = today(), sd = sDay(t), pd = planDay(t), st = dayStatus(t), h = '<section class="home"><div><div class="eyebrow">' + esc(fmtDate(t, { weekday: "long" })) + '</div><h1>' + esc(fmtDate(t, { day: "numeric", month: "long" })) + '</h1></div>';
+    var sSub;
+    if (sd) { var hrs = sHours(t, sd); sSub = "Day " + (sIndex(t) + 1) + " · " + sTracks(sd).join(" · ") + " · " + fmtH(hrs.done) + " of " + fmtH(hrs.plan) + " done"; }
+    else sSub = sIndex(t) < 0 ? "Starts " + fmtDate(SP.start, { weekday: "short", day: "numeric", month: "short" }) : "Study plan complete";
+    h += '<button class="choice study" type="button" data-act="pick-study"><span class="ico">' + ICON_BOOK + '</span><span><b>Study</b><span class="sub">' + esc(sSub) + '</span></span><span class="chev">' + ICON_R + '</span></button>';
+    var eSub = pd ? (pd.week === 0 ? "Week 0 · " : "Week " + pd.week + " · ") + pd.session + (st.label && st.key !== "today" ? " · " + st.label : "")
+      : planIndex(t) < 0 ? "Starts " + fmtDate(addDays(state.settings.startDate, 1 - BASE.length), { weekday: "short", day: "numeric", month: "short" }) : "Training plan complete";
+    h += '<button class="choice" type="button" data-act="pick-ex"><span class="ico">' + ICON_LIFT + '</span><span><b>Exercise</b><span class="sub">' + esc(eSub) + '</span></span><span class="chev">' + ICON_R + '</span></button>';
+    return h + '<p class="small muted" style="margin:0">Tap the grid button at the top left to come back here.</p></section>';
+  }
+
+  function renderStudyToday() {
+    var date = state.sdate, sd = sDay(date), t = today(), h = "";
+    var eyebrow = sd ? "Day " + (sIndex(date) + 1) + " of " + SDAYS.length + " · Week " + sd.week + " · " + phaseShort(sd.phase) : "Outside the study plan";
+    h += '<section class="daynav"><button class="iconbtn" type="button" data-act="sday-prev" aria-label="Previous day">' + ICON_L + '</button>' +
+      '<div class="daytitle"><div class="eyebrow">' + esc(eyebrow) + '</div><h1>' + esc(fmtDate(date, { weekday: "long", day: "numeric", month: "short" })) + '</h1></div>' +
+      '<button class="iconbtn" type="button" data-act="sday-next" aria-label="Next day">' + ICON_R + '</button></section>';
+    if (t < SP.start) { var dl = dayNum(SP.start) - dayNum(t); h += '<div class="banner"><span>Your study plan starts ' + esc(fmtDate(SP.start, { weekday: "long", day: "numeric", month: "long" })) + ' (in ' + dl + (dl === 1 ? ' day' : ' days') + '). This is a preview.</span></div>'; }
+    else if (date !== t && t <= SP.end) h += '<div class="banner warn"><span>You are looking at ' + (date < t ? "a past" : "a future") + ' day.</span><button type="button" data-act="sday-today">Back to today</button></div>';
+    if (!sd) return h + '<section class="panel"><p class="muted">No study planned for this date. The plan runs ' + esc(fmtDate(SP.start, { day: "numeric", month: "short", year: "numeric" })) + ' to ' + esc(fmtDate(SP.end, { day: "numeric", month: "short", year: "numeric" })) + '.</p></section>';
+    var hrs = sHours(date, sd), prog = hrs.plan ? hrs.done / hrs.plan : 0, st = sStatus(date);
+    h += '<section class="panel"><div class="row"><div class="eyebrow">Study · ' + esc(phaseShort(sd.phase)) + '</div>' + (st.label ? '<span class="chip ' + st.cls + '">' + esc(st.label) + '</span>' : '') + '</div>' +
+      '<div class="session-title">' + esc(sTracks(sd).join(" · ")) + '</div>' +
+      '<div class="progress' + (prog >= 0.999 ? " good" : "") + '"><span style="width:' + Math.round(prog * 100) + '%"></span></div>' +
+      '<div class="row small muted"><span>' + fmtH(hrs.done) + ' of ' + fmtH(hrs.plan) + ' done</span><span>+ 1 NeetCode problem</span></div></section>';
+    if (!state.loaded) h += '<div class="banner"><span>Loading your log…</span></div>';
+    var blocks = [];
+    sd.rows.forEach(function (r, ix) { var b = blocks[blocks.length - 1]; if (!b || b.name !== r.block) blocks.push(b = { name: r.block, rows: [] }); b.rows.push([r, ix]); });
+    blocks.forEach(function (b) {
+      var lc = b.name.indexOf("LC") === 0, est = b.rows.reduce(function (a, x) { return a + x[0].est; }, 0);
+      h += '<div class="blockh"><h2>' + esc(lc ? "LeetCode" : b.name.replace(/\s*\(.*\)$/, "")) + '</h2><span class="small muted">' + esc(lc ? "Outside the 4 h" : fmtH(est)) + '</span></div>' +
+        '<div class="items">' + b.rows.map(function (x) { return renderStudyItem(date, x[0]); }).join("") + '</div>';
+    });
+    return h;
+  }
+  function renderStudyItem(date, r) {
+    if (isLC(r)) return renderLeetCode(date, r);
+    var T = STASK[r.tid] || { track: "", title: r.tid, steps: [], tip: "", src: "" }, L = sPeek(date, r.key) || {}, done = !!L.d, dis = state.loaded && !state.readOnly ? "" : " disabled";
+    var n = stepsFor(r.tid).length, ticked = stepsTicked(r.tid);
+    var h = '<article class="ex' + (done ? " is-done" : "") + '"><header class="ex-h"><span class="plate ' + (TRACK_PLATE[T.track] || "") + '" aria-hidden="true"></span>' +
+      '<div class="ex-t"><div class="part">' + esc([T.track, r.tid, r.nparts ? "part " + r.part + " of " + r.nparts : "", fmtH(r.est)].filter(Boolean).join(" · ")) + '</div><h3>' + esc(T.title) + '</h3></div>' +
+      '<span class="ex-state' + (done ? " done" : "") + '">' + (done ? "Done" : ticked + "/" + n) + '</span></header>';
+    h += '<div class="sets">' + stepRows(r.key, r.tid, dis);
+    if (r.nparts) h += '<div class="set chk kg part-done' + (L.p ? " done" : "") + '"><span class="n">✓</span><span class="tg">Part ' + r.part + ' of ' + r.nparts + ' done for today</span>' +
+      '<button class="tick" type="button" data-act="spart" data-key="' + esc(r.key) + '" data-tid="' + esc(r.tid) + '" aria-pressed="' + (L.p ? "true" : "false") + '" aria-label="Part ' + r.part + ' done for today"' + dis + '>' + ICON_CHECK + '</button></div>';
+    h += '</div>';
+    if (T.tip) h += '<div class="prev">' + esc(T.tip) + '</div>';
+    if (T.src) h += '<div class="src">' + linkify(T.src) + '</div>';
+    h += '<details class="notes"' + (L.h != null || L.n ? " open" : "") + '><summary>Log time or a note</summary>' +
+      '<div class="grid2" style="margin-top:8px"><label class="lab">Actual hours<input class="field" inputmode="decimal" data-sin="h" data-key="' + esc(r.key) + '" value="' + esc(L.h == null ? "" : L.h) + '" placeholder="' + esc(r.est) + '"' + dis + '></label></div>' +
+      '<input class="field wide" style="margin-top:8px" data-sin="n" data-key="' + esc(r.key) + '" value="' + esc(L.n || "") + '" placeholder="Misses, what to redo, questions" aria-label="Note"' + dis + '></details>';
+    return h + '</article>';
+  }
+  /* LeetCode: one problem a day, with your own write-up of the algorithm (kept per problem, so pass 2 and the NeetCode tab show it too). */
+  function algBox(p, dis) {
+    return '<label class="lab">Algorithm in your own words<textarea class="field area" data-alg="' + p.num + '" rows="5" placeholder="Pattern and key idea, the steps, edge cases, time and space. E.g. Sliding window: grow right until every needed char is covered, then shrink left while it stays valid; keep the shortest window. O(n) time."' + dis + '>' + esc(ncLog(p.num).a || "") + '</textarea></label>' +
+      (p.note ? '<div class="prev">Your earlier note: “' + esc(p.note) + '”</div>' : '');
+  }
+  function renderLeetCode(date, r) {
+    var p = ncFor(r.tid), L = sPeek(date, r.key) || {}, done = !!L.d, dis = state.loaded && !state.readOnly ? "" : " disabled", pass2 = /^LC2-/.test(r.tid);
+    if (!p) return '';
+    var n = stepsFor(r.tid).length, ticked = stepsTicked(r.tid);
+    var h = '<article class="ex' + (done ? " is-done" : "") + '"><header class="ex-h"><span class="plate yellow" aria-hidden="true"></span>' +
+      '<div class="ex-t"><div class="part">' + esc(["NeetCode #" + p.num, p.diff, p.pattern, pass2 ? "Pass 2 · re-solve" : "Pass 1"].join(" · ")) + '</div><h3>' + esc(p.name) + '</h3></div>' +
+      '<span class="ex-state' + (done ? " done" : "") + '">' + (done ? "Done" : ticked + "/" + n) + '</span></header>';
+    h += '<div class="src"><a href="' + esc(p.link) + '" target="_blank" rel="noopener">Open on LeetCode ↗</a>' + (p.premium ? ' · LeetCode Premium: the free version is on neetcode.io' : '') + '</div>';
+    h += '<div class="sets">' + stepRows(r.key, r.tid, dis) + '</div>';
+    h += algBox(p, dis);
+    h += '<div class="row"><button class="pill" type="button" data-act="sshaky" data-key="' + esc(r.key) + '" aria-pressed="' + (L.sh ? "true" : "false") + '"' + dis + '>Needed the solution</button>' +
+      '<label class="lab" style="width:110px">Minutes taken<input class="field" inputmode="numeric" data-sin="m" data-key="' + esc(r.key) + '" value="' + esc(L.m == null ? "" : L.m) + '"' + dis + '></label></div>';
+    return h + '</article>';
+  }
+
+  function sWeekOf(date) { var sd = sDay(date); return sd ? sd.week : sIndex(date) < 0 ? 1 : SDAYS[SDAYS.length - 1].week; }
+  function renderStudyWeek() {
+    var nW = SDAYS[SDAYS.length - 1].week, curW = sWeekOf(today()), w = state.sweek != null ? state.sweek : curW;
+    state.sweek = w;
+    var ws = addDays(SP.start, (w - 1) * 7), we = addDays(ws, 6), plan = 0, done = 0, phs = [];
+    var h = '<section class="weekhead"><button class="iconbtn" type="button" data-act="sweek-prev" aria-label="Previous week">' + ICON_L + '</button>' +
+      '<div><h1>Week ' + w + '</h1><div class="eyebrow" style="text-align:center">' + esc(fmtDate(ws, { day: "numeric", month: "short" }) + " – " + fmtDate(we, { day: "numeric", month: "short" })) + '</div></div>' +
+      '<button class="iconbtn" type="button" data-act="sweek-next" aria-label="Next week">' + ICON_R + '</button></section><div class="phasebar" aria-hidden="true">';
+    for (var k = 1; k <= nW; k++) h += '<span style="flex:1" class="' + (k === w ? "on" : (k < curW ? "past" : "")) + '"></span>';
+    h += '</div>';
+    var rowsH = "";
+    for (var o = 0; o < 7; o++) {
+      var date = addDays(ws, o), sd = sDay(date), st = sStatus(date);
+      if (sd) { var hr = sHours(date, sd); plan += hr.plan; done += hr.done; if (phs.indexOf(phaseShort(sd.phase)) < 0) phs.push(phaseShort(sd.phase)); }
+      rowsH += '<button class="dayrow' + (date === today() ? " today" : "") + '" type="button" data-act="sopen-day" data-date="' + date + '"' + (sd ? "" : " disabled") + '><span class="d">' + esc(fmtDate(date, { weekday: "short" })) + '<small>' + esc(fmtDate(date, { day: "numeric", month: "short" })) + '</small></span>' +
+        '<span class="s">' + esc(sd ? sTracks(sd).join(" · ") : "") + '</span>' + (st.label ? '<span class="chip ' + st.cls + '">' + esc(st.label) + '</span>' : '<span></span>') + '</button>';
+    }
+    h += '<section class="panel"><div class="row"><div class="chips">' + phs.map(function (p) { return '<span class="chip accent">' + esc(p) + '</span>'; }).join("") + '</div><span class="small muted">' + fmtH(done) + ' of ' + fmtH(plan) + '</span></div>' +
+      '<div class="progress' + (plan && done >= plan ? " good" : "") + '"><span style="width:' + (plan ? Math.round(100 * done / plan) : 0) + '%"></span></div><div class="daylist">' + rowsH + '</div></section>';
+    if (w !== curW) h += '<button class="secondary" type="button" data-act="sweek-now">Go to this week</button>';
+    return h;
+  }
+
+  function renderStudyProgress() {
+    var t = today(), tr = {}, tot = { plan: 0, done: 0, due: 0 }, act = { est: 0, real: 0 }, wk = { plan: 0, done: 0 }, curW = sWeekOf(t), lc1 = 0, lc2 = 0;
+    SDAYS.forEach(function (sd, ix) {
+      var date = sDateAt(ix);
+      sd.rows.forEach(function (r) {
+        var dn = sDone(date, r), L = sPeek(date, r.key);
+        if (isLC(r)) { if (dn) { if (r.tid.indexOf("LC2-") === 0) lc2++; else lc1++; } return; }
+        var k = (STASK[r.tid] || {}).track || "Other"; tr[k] = tr[k] || { plan: 0, done: 0 };
+        tr[k].plan += r.est; tot.plan += r.est; if (date <= t) tot.due += r.est;
+        if (sd.week === curW) { wk.plan += r.est; if (dn) wk.done += r.est; }
+        if (dn) { tr[k].done += r.est; tot.done += r.est; if (L && num(L.h) != null) { act.est += r.est; act.real += num(L.h); } }
+      });
+    });
+    var diff = tot.done - tot.due, solved = SNC.filter(function (p) { return p.before; }).length + lc1;
+    var h = '<section class="panel"><h2>Overall</h2><div class="stats"><div class="stat"><b class="num">' + Math.round(100 * tot.done / tot.plan) + '%</b><span>' + fmtH(tot.done) + ' of ' + Math.round(tot.plan) + ' h</span></div>' +
+      '<div class="stat"><b class="num">' + (diff >= 0 ? "+" : "−") + Math.abs(Math.round(diff * 10) / 10) + '</b><span>h vs plan to date</span></div>' +
+      '<div class="stat"><b class="num">' + (act.est ? (Math.round(100 * act.real / act.est) / 100) + "×" : "–") + '</b><span>Actual ÷ planned</span></div></div>' +
+      '<p class="small muted" style="margin:0">' + (act.est ? "Pace uses the rows where you logged actual hours. Above 1.2× for two weeks: tell Claude and the plan gets re-flowed." : "Log actual hours on a few rows to see whether the 2.5× lecture multiplier holds.") + ' Study ends ' + esc(fmtDate(SP.end, { day: "numeric", month: "short", year: "numeric" })) + '.</p></section>';
+    h += '<section class="panel"><div class="row"><h2>This week</h2><span class="small muted">' + fmtH(wk.done) + ' of ' + fmtH(wk.plan) + '</span></div><div class="progress' + (wk.plan && wk.done >= wk.plan ? " good" : "") + '"><span style="width:' + (wk.plan ? Math.round(100 * wk.done / wk.plan) : 0) + '%"></span></div></section>';
+    h += '<section class="panel"><h2>By track</h2><div class="goals">' + STRACKS.filter(function (k) { return tr[k]; }).map(function (k) {
+      var f = tr[k].plan ? tr[k].done / tr[k].plan : 0;
+      return '<div class="goal"><div class="eyebrow">' + esc(k) + '</div><div class="v num">' + Math.round(f * 100) + '<small>%</small></div><div class="progress' + (f >= 0.999 ? " good" : "") + '"><span style="width:' + Math.round(f * 100) + '%"></span></div><div class="small muted">' + fmtH(tr[k].done) + ' of ' + fmtH(tr[k].plan) + '</div></div>';
+    }).join("") + '</div></section>';
+    var written = SNC.filter(function (p) { return (ncLog(p.num).a || "").trim(); }).length;
+    h += '<section class="panel"><div class="row"><h2>NeetCode 150</h2><span class="small muted">' + lc2 + ' re-solves · ' + written + ' write-ups</span></div><div class="row small"><span><b class="num">' + solved + '</b> of 150 solved</span><button class="linkbtn" type="button" data-stab="lc">Open list</button></div>' +
+      '<div class="progress' + (solved >= 150 ? " good" : "") + '"><span style="width:' + Math.round(100 * solved / 150) + '%"></span></div></section>';
+    var G = state.study.gates || {}, dis = state.loaded && !state.readOnly ? "" : " disabled";
+    h += '<section class="panel"><h2>Gates and self-tests</h2><p class="small muted" style="margin:0">Take each closed-book test once its prerequisite is done; a FAIL means redo that material in the next Sunday buffer.</p><div>' + SGATES.map(function (g) {
+      var ready = taskDone(g.key), res = G[g.id] && G[g.id].r;
+      return '<div class="gate"><div class="row"><span class="small"><b>' + esc(g.id) + '</b> · ' + esc(g.type) + '</span><span class="chip ' + (res === "PASS" ? "good" : res === "FAIL" ? "bad" : ready ? "accent" : "") + '">' + esc(res || (ready ? "Ready to test" : "From " + fmtDate(g.date, { day: "numeric", month: "short" }))) + '</span></div>' +
+        '<div><b>' + esc(g.name) + '</b></div><div class="small muted">' + esc(g.test) + '</div>' +
+        '<div class="seg">' + ["PASS", "FAIL"].map(function (v) { return '<button class="pill" type="button" data-act="sgate" data-id="' + esc(g.id) + '" data-v="' + v + '" aria-pressed="' + (res === v ? "true" : "false") + '"' + dis + '>' + v + '</button>'; }).join("") + '</div>' +
+        (res === "FAIL" && g.fail ? '<div class="small" style="color:var(--bad)">' + esc(g.fail) + '</div>' : '') + '</div>';
+    }).join("") + '</div></section>';
+    return h;
+  }
+
+  function renderStudyLC() {
+    var f = state.ncFilter, dis = state.loaded && !state.readOnly ? "" : " disabled", rows = SNC.map(function (p) {
+      var L1 = p.p1 ? sPeek(p.p1, "LC-" + pad3(p.num)) : null, L2 = p.p2 ? sPeek(p.p2, "LC2-" + pad3(p.num)) : null;
+      var done = p.before || !!(L1 && L1.d), shaky = p.shaky || !!(L1 && L1.sh) || !!(L2 && L2.sh);
+      return { p: p, done: done, re: !!(L2 && L2.d), shaky: shaky, alg: ncLog(p.num).a || "" };
+    });
+    var solved = rows.filter(function (x) { return x.done; }).length, written = rows.filter(function (x) { return x.alg.trim(); }).length;
+    var h = '<section class="panel"><div class="row"><h2>NeetCode 150</h2><span class="chip ' + (solved >= 150 ? "good" : "accent") + '">' + solved + ' / 150</span></div>' +
+      '<div class="progress"><span style="width:' + Math.round(100 * solved / 150) + '%"></span></div>' +
+      '<p class="small muted" style="margin:0">One problem a day on Study → Today, where you tick it off and write the algorithm in your own words. Tap any problem below to read or edit your write-up (' + written + ' written so far).</p>' +
+      '<div class="seg">' + [["all", "All"], ["todo", "To do"], ["done", "Solved"], ["shaky", "Shaky"], ["nowrite", "No write-up"]].map(function (x) { return '<button class="pill" type="button" data-act="ncf" data-f="' + x[0] + '" aria-pressed="' + (f === x[0] ? "true" : "false") + '">' + x[1] + '</button>'; }).join("") + '</div></section>';
+    var shown = rows.filter(function (x) { return f === "all" || (f === "todo" && !x.done) || (f === "done" && x.done) || (f === "shaky" && x.shaky) || (f === "nowrite" && x.done && !x.alg.trim()); });
+    var groups = [];
+    shown.forEach(function (x) { var g = groups[groups.length - 1]; if (!g || g.name !== x.p.pattern) groups.push(g = { name: x.p.pattern, items: [] }); g.items.push(x); });
+    if (!groups.length) h += '<p class="empty">Nothing here yet.</p>';
+    groups.forEach(function (g) {
+      h += '<section class="panel"><h2>' + esc(g.name) + '</h2><div>' + g.items.map(function (x) {
+        var p = x.p, when = p.before ? "Done before the plan" : x.done ? "Solved" + (p.p1 ? " · " + fmtDate(p.p1, { day: "numeric", month: "short" }) : "") : p.p1 ? "Scheduled " + fmtDate(p.p1, { weekday: "short", day: "numeric", month: "short" }) : "";
+        if (x.re) when += " · re-solved"; else if (p.p2) when += " · re-solve " + fmtDate(p.p2, { day: "numeric", month: "short" });
+        return '<details class="ncd"><summary class="ncrow"><span class="nn">' + p.num + '</span><span><b>' + esc(p.name) + '</b><span class="small muted">' + esc(p.diff + " · " + when + (x.alg.trim() ? " · write-up saved" : "")) + '</span></span>' +
+          '<span class="chip ' + (x.done ? (x.shaky ? "warn" : "good") : "") + '">' + (x.done ? (x.shaky ? "Shaky" : "Solved") : "To do") + '</span></summary>' +
+          '<div class="ncbody"><div class="src"><a href="' + esc(p.link) + '" target="_blank" rel="noopener">Open on LeetCode ↗</a>' + (p.premium ? ' · Premium: free version on neetcode.io' : '') + '</div>' + algBox(p, dis) + '</div></details>';
+      }).join("") + '</div></section>';
+    });
+    return h;
+  }
+  function pad3(n) { return String(n).padStart(3, "0"); }
+
+  function renderStudyMe() {
+    var total = 0; SDAYS.forEach(function (sd) { sd.rows.forEach(function (r) { if (!isLC(r)) total += r.est; }); });
+    return renderSyncPanel() + '<section class="panel"><h2>Study plan</h2><p class="small muted" style="margin:0">' + SDAYS.length + ' days from ' + esc(fmtDate(SP.start, { day: "numeric", month: "short", year: "numeric" })) + ' to ' + esc(fmtDate(SP.end, { day: "numeric", month: "short", year: "numeric" })) +
+      ', 4 h a day (' + Math.round(total) + ' h in all) plus one NeetCode problem. Sundays are a 2 h buffer for anything unfinished and a 2 h weekly review. Ticks, hours and notes save on this phone and sync with your workout log.</p>' +
+      '<p class="small muted" style="margin:0">The plan comes from study_tracker.xlsx. If it gets re-flowed, re-export it with tools/build_study.py and rebuild the app; ticks stay attached to their task IDs.</p></section>';
+  }
+  function renderStudyTab() { return state.stab === "week" ? renderStudyWeek() : state.stab === "progress" ? renderStudyProgress() : state.stab === "lc" ? renderStudyLC() : state.stab === "me" ? renderStudyMe() : renderStudyToday(); }
+
   /* ------------------------------------------------------------ render */
   function render() {
     var v = document.getElementById("view"), y = window.scrollY;
-    var keepScroll = render.lastKey === state.tab + "|" + state.date + "|" + state.weekView;
-    render.lastKey = state.tab + "|" + state.date + "|" + state.weekView;
-    var needAuth = !state.session && !prefGet("skipAuth") && state.tab === "today";
-    var html = needAuth ? renderAuth(false) : state.tab === "plan" ? renderPlan() : state.tab === "progress" ? renderProgress() : state.tab === "food" ? renderFood() : state.tab === "me" ? renderMe() : renderToday();
+    var sec = state.section, key = [sec, state.tab, state.date, state.weekView, state.stab, state.sdate, state.sweek, state.ncFilter].join("|");
+    var keepScroll = render.lastKey === key;
+    render.lastKey = key;
+    var needAuth = sec !== "home" && !state.session && !prefGet("skipAuth") && (sec === "study" ? state.stab : state.tab) === "today";
+    var html = sec === "home" ? renderHome() : needAuth ? renderAuth(false) : sec === "study" ? renderStudyTab() :
+      state.tab === "plan" ? renderPlan() : state.tab === "progress" ? renderProgress() : state.tab === "food" ? renderFood() : state.tab === "me" ? renderMe() : renderToday();
     v.innerHTML = html;
-    document.querySelectorAll(".tab").forEach(function (b) { if (b.dataset.tab === state.tab) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
-    var pd = planDay(today());
-    document.getElementById("hdr-sub").textContent = pd ? (pd.week === 0 ? "Week 0 · Baseline" : "Week " + pd.week + " of 52 · " + phaseLabel(pd.week)) : planIndex(today()) < 0 ? "Starts " + fmtDate(addDays(state.settings.startDate, 1 - BASE.length), { day: "numeric", month: "short" }) : "Plan complete";
+    document.getElementById("tabs").hidden = sec === "home";
+    document.getElementById("tabs-ex").hidden = sec !== "exercise";
+    document.getElementById("tabs-st").hidden = sec !== "study";
+    document.getElementById("homebtn").hidden = sec === "home";
+    document.querySelectorAll("[data-tab].tab").forEach(function (b) { if (b.dataset.tab === state.tab) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+    document.querySelectorAll("[data-stab].tab").forEach(function (b) { if (b.dataset.stab === state.stab) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+    var pd = planDay(today()), sd = sDay(today());
+    document.getElementById("hdr-title").textContent = sec === "study" ? "Study plan" : sec === "home" ? "Coach" : "Hybrid Year";
+    document.getElementById("hdr-sub").textContent = sec === "home" ? "Study or exercise" :
+      sec === "study" ? (sd ? "Day " + (sIndex(today()) + 1) + " of " + SDAYS.length + " · " + phaseShort(sd.phase) : sIndex(today()) < 0 ? "Starts " + fmtDate(SP.start, { day: "numeric", month: "short" }) : "Plan complete") :
+      pd ? (pd.week === 0 ? "Week 0 · Baseline" : "Week " + pd.week + " of 52 · " + phaseLabel(pd.week)) : planIndex(today()) < 0 ? "Starts " + fmtDate(addDays(state.settings.startDate, 1 - BASE.length), { day: "numeric", month: "short" }) : "Plan complete";
     setSync(state.syncText, state.syncCls);
     if (keepScroll) window.scrollTo(0, y); else window.scrollTo(0, 0);
   }
@@ -1142,15 +1473,39 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
   }
 
   /* ------------------------------------------------------------ events */
-  function go(tab) { state.tab = tab; try { history.replaceState(null, "", "#" + tab); } catch (e) { /* ignore */ } prefSet("tab", tab); render(); }
+  function setHash(h) { try { history.replaceState(null, "", h ? "#" + h : location.pathname + location.search); } catch (e) { /* ignore */ } }
+  function go(tab) { state.section = "exercise"; state.tab = tab; setHash(tab); prefSet("tab", tab); render(); }
+  function goStudy(tab) { state.section = "study"; state.stab = tab; setHash(tab === "today" ? "study" : "study-" + tab); render(); }
+  function goHome() { state.section = "home"; setHash(""); render(); }
   document.addEventListener("click", function (ev) {
     var tabBtn = ev.target.closest("[data-tab]");
     if (tabBtn) { go(tabBtn.dataset.tab); return; }
+    var stabBtn = ev.target.closest("[data-stab]");
+    if (stabBtn) { goStudy(stabBtn.dataset.stab); return; }
     var tip = ev.target.closest("[data-tip]");
     if (tip) { var t = document.getElementById("tip-" + tip.dataset.chart); if (t) t.textContent = tip.dataset.tip; return; }
     var b = ev.target.closest("[data-act]"); if (!b || b.disabled) return;
     var act = b.dataset.act, i = b.dataset.i != null ? Number(b.dataset.i) : null, date = state.date, pd = planDay(date);
     switch (act) {
+      case "home": goHome(); break;
+      case "pick-study": state.sdate = pickStudyDate(); state.sweek = null; goStudy("today"); break;
+      case "pick-ex": go("today"); break;
+      case "sday-prev": state.sdate = addDays(state.sdate, -1); render(); break;
+      case "sday-next": state.sdate = addDays(state.sdate, 1); render(); break;
+      case "sday-today": state.sdate = pickStudyDate(); render(); break;
+      case "sweek-prev": state.sweek = Math.max(1, (state.sweek || 1) - 1); render(); break;
+      case "sweek-next": state.sweek = Math.min(SDAYS[SDAYS.length - 1].week, (state.sweek || 1) + 1); render(); break;
+      case "sweek-now": state.sweek = null; render(); break;
+      case "sopen-day": state.sdate = b.dataset.date; goStudy("today"); break;
+      case "sstep": toggleStep(state.sdate, b.dataset.key, b.dataset.tid, Number(b.dataset.s)); render(); break;
+      case "spart": { var Lp = sItem(state.sdate, b.dataset.key); Lp.p = !Lp.p; sTouch(state.sdate); refreshDone(b.dataset.tid); render(); break; }
+      case "sshaky": { var Lk = sItem(state.sdate, b.dataset.key); Lk.sh = !Lk.sh; sTouch(state.sdate); render(); break; }
+      case "sgate": {
+        var G = clone(state.study.gates || {}), gid = b.dataset.id, gv = b.dataset.v;
+        if (G[gid] && G[gid].r === gv) delete G[gid]; else G[gid] = { r: gv, date: today() };
+        state.study.gates = G; scheduleSave("study/gates", function () { return state.study.gates; }); render(); break;
+      }
+      case "ncf": state.ncFilter = b.dataset.f; render(); break;
       case "day-prev": state.date = addDays(state.date, -1); state.dateTouched = true; render(); break;
       case "day-next": state.date = addDays(state.date, 1); state.dateTouched = true; render(); break;
       case "day-today": state.date = today(); state.dateTouched = true; render(); break;
@@ -1219,6 +1574,16 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
       document.getElementById("calc-out").innerHTML = v ? '<b class="num">' + Math.round(v) + ' lb</b>' : '<span class="muted">–</span>';
       return;
     }
+    if (el.dataset.sin) {
+      var Ls = sItem(state.sdate, el.dataset.key);
+      if (el.dataset.sin === "h") Ls.h = num(el.value); else if (el.dataset.sin === "m") Ls.m = num(el.value); else Ls.n = el.value;
+      sTouch(state.sdate); return;
+    }
+    if (el.dataset.alg) {
+      var NC = state.study.nc = state.study.nc || {};
+      NC[el.dataset.alg] = { a: el.value, t: new Date().toISOString() };
+      scheduleSave("study/nc", function () { return state.study.nc; }); return;
+    }
     var kind = el.dataset.in; if (!kind) return;
     var date = state.date, pd = planDay(date), i = el.dataset.i != null ? Number(el.dataset.i) : null, raw = el.value;
     if (kind === "w" || kind === "r") {
@@ -1260,7 +1625,7 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
     }
   });
   document.addEventListener("click", function (ev) {
-    if (ev.target.closest("#sync")) { go("me"); return; }
+    if (ev.target.closest("#sync")) { if (state.section === "study") goStudy("me"); else go("me"); return; }
     var b = ev.target.closest("[data-act]"); if (!b) return;
     var act = b.dataset.act;
     if (act === "demo-zoom") { b.classList.toggle("big"); }
@@ -1310,8 +1675,14 @@ details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); fon
   });
 
   /* ------------------------------------------------------------ boot */
+  /* Opening the app lands on the Study / Exercise chooser; a #tab in the URL (e.g. after a reload) goes straight there. */
   var hash = (location.hash || "").replace("#", "");
-  state.tab = ["today", "plan", "progress", "food", "me"].indexOf(hash) >= 0 ? hash : (prefGet("tab") || "today");
+  if (["today", "plan", "progress", "food", "me"].indexOf(hash) >= 0) { state.section = "exercise"; state.tab = hash; }
+  else if (hash === "study" || hash.indexOf("study-") === 0) {
+    state.section = "study"; state.stab = hash === "study" ? "today" : hash.slice(6);
+    if (["today", "week", "progress", "lc", "me"].indexOf(state.stab) < 0) state.stab = "today";
+  } else { state.section = "home"; state.tab = prefGet("tab") || "today"; }
+  state.sdate = pickStudyDate();
   pickInitialDate();
   render();
   startSync();
