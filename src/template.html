@@ -1204,6 +1204,7 @@ details.ncd > summary::-webkit-details-marker { display: none; }
   function sStatus(date) {
     var sd = sDay(date); if (!sd) return { label: "", cls: "" };
     var h = sHours(date, sd), p = h.plan ? h.done / h.plan : 0;
+    if (!sd.rows.length) return { label: "", cls: "" };
     if (p >= 0.999) return { label: "Done", cls: "good" };
     if (p > 0) return { label: Math.round(p * 100) + "%", cls: "warn" };
     if (date < today()) return { label: "Not done", cls: "bad" };
@@ -1289,11 +1290,12 @@ details.ncd > summary::-webkit-details-marker { display: none; }
     if (t < SP.start) { var dl = dayNum(SP.start) - dayNum(t); h += '<div class="banner"><span>Your study plan starts ' + esc(fmtDate(SP.start, { weekday: "long", day: "numeric", month: "long" })) + ' (in ' + dl + (dl === 1 ? ' day' : ' days') + '). This is a preview.</span></div>'; }
     else if (date !== t && t <= SP.end) h += '<div class="banner warn"><span>You are looking at ' + (date < t ? "a past" : "a future") + ' day.</span><button type="button" data-act="sday-today">Back to today</button></div>';
     if (!sd) return h + '<section class="panel"><p class="muted">No study planned for this date. The plan runs ' + esc(fmtDate(SP.start, { day: "numeric", month: "short", year: "numeric" })) + ' to ' + esc(fmtDate(SP.end, { day: "numeric", month: "short", year: "numeric" })) + '.</p></section>';
+    if (!sd.rows.length) return h + '<section class="panel"><p class="muted">Nothing planned for this day.</p></section>';
     var hrs = sHours(date, sd), prog = hrs.plan ? hrs.done / hrs.plan : 0, st = sStatus(date);
     h += '<section class="panel"><div class="row"><div class="eyebrow">Study · ' + esc(phaseShort(sd.phase)) + '</div>' + (st.label ? '<span class="chip ' + st.cls + '">' + esc(st.label) + '</span>' : '') + '</div>' +
       '<div class="session-title">' + esc(sTracks(sd).join(" · ")) + '</div>' +
       '<div class="progress' + (prog >= 0.999 ? " good" : "") + '"><span style="width:' + Math.round(prog * 100) + '%"></span></div>' +
-      '<div class="row small muted"><span>' + fmtH(hrs.done) + ' of ' + fmtH(hrs.plan) + ' done</span><span>+ 1 NeetCode problem</span></div></section>';
+      '<div class="row small muted"><span>' + fmtH(hrs.done) + ' of ' + fmtH(hrs.plan) + ' done</span><span>' + (sd.rows.some(isLC) ? '+ 1 NeetCode problem' : '') + '</span></div></section>';
     if (!state.loaded) h += '<div class="banner"><span>Loading your log…</span></div>';
     var blocks = [];
     sd.rows.forEach(function (r, ix) { var b = blocks[blocks.length - 1]; if (!b || b.name !== r.block) blocks.push(b = { name: r.block, rows: [] }); b.rows.push([r, ix]); });
@@ -1382,7 +1384,7 @@ details.ncd > summary::-webkit-details-marker { display: none; }
     var h = '<section class="panel"><h2>Overall</h2><div class="stats"><div class="stat"><b class="num">' + Math.round(100 * tot.done / tot.plan) + '%</b><span>' + fmtH(tot.done) + ' of ' + Math.round(tot.plan) + ' h</span></div>' +
       '<div class="stat"><b class="num">' + (diff >= 0 ? "+" : "−") + Math.abs(Math.round(diff * 10) / 10) + '</b><span>h vs plan to date</span></div>' +
       '<div class="stat"><b class="num">' + (act.est ? (Math.round(100 * act.real / act.est) / 100) + "×" : "–") + '</b><span>Actual ÷ planned</span></div></div>' +
-      '<p class="small muted" style="margin:0">' + (act.est ? "Pace uses the rows where you logged actual hours. Above 1.2× for two weeks: tell Claude and the plan gets re-flowed." : "Log actual hours on a few rows to see whether the 2.5× lecture multiplier holds.") + ' Study ends ' + esc(fmtDate(SP.end, { day: "numeric", month: "short", year: "numeric" })) + '.</p></section>';
+      '<p class="small muted" style="margin:0">' + (act.est ? "Pace uses the rows where you logged actual hours. Above 1.2× for two weeks: tell Claude and the plan gets re-flowed." : "Log actual hours on each task this week: they show whether the plan's 1.5× pace holds.") + ' Study ends ' + esc(fmtDate(SP.end, { day: "numeric", month: "short", year: "numeric" })) + '.</p></section>';
     h += '<section class="panel"><div class="row"><h2>This week</h2><span class="small muted">' + fmtH(wk.done) + ' of ' + fmtH(wk.plan) + '</span></div><div class="progress' + (wk.plan && wk.done >= wk.plan ? " good" : "") + '"><span style="width:' + (wk.plan ? Math.round(100 * wk.done / wk.plan) : 0) + '%"></span></div></section>';
     h += '<section class="panel"><h2>By track</h2><div class="goals">' + STRACKS.filter(function (k) { return tr[k]; }).map(function (k) {
       var f = tr[k].plan ? tr[k].done / tr[k].plan : 0;
