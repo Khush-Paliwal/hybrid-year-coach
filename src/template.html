@@ -344,11 +344,12 @@ details.ncd > summary::-webkit-details-marker { display: none; }
   function baseName(ex) { return String(ex).replace(/^(HSPU|Handstand|Muscle-up) \((level|stage) \d+\): /, "").replace(/: (TEST|top set|back-off)$/, ""); }
   function demoFor(ex) { var b = baseName(ex); for (var k = 0; k < DEMO_RULES.length; k++) if (DEMO_RULES[k][0].test(b)) return DEMO_RULES[k][1]; return null; }
   var CURATED_HOW = [[/^kegels?\b/i, "kegel exercises for men how to"], [/^slow kegel/i, "kegel exercises for men slow holds"],
-    [/^quick-flick/i, "quick flick kegel exercises for men"], [/^reverse kegel/i, "reverse kegel for men how to"],
+    [/^quick-flick/i, "quick flick kegel exercises for men"],
+    [/^reverse kegel/i, "https://www.youtube.com/watch?v=Auca88tmUu8"], // pelvic-floor physio Michelle Kenway: relaxation ("drop") exercises
     [/^the knack/i, "the knack pelvic floor exercise"]];
   function howUrl(name) {
     var q = baseName(name);
-    for (var c = 0; c < CURATED_HOW.length; c++) if (CURATED_HOW[c][0].test(q)) return "https://www.youtube.com/results?search_query=" + encodeURIComponent(CURATED_HOW[c][1]);
+    for (var c = 0; c < CURATED_HOW.length; c++) if (CURATED_HOW[c][0].test(q)) return /^https?:/.test(CURATED_HOW[c][1]) ? CURATED_HOW[c][1] : "https://www.youtube.com/results?search_query=" + encodeURIComponent(CURATED_HOW[c][1]);
     if (q.indexOf(":") >= 0) { var parts = q.split(":"); q = parts[1] + " " + parts[0]; }
     q = q.replace(/\([^)]*\)/g, " ").replace(/\b(EMOM|TEST)\b/g, " ").replace(/\b\d+(\.\d+)?\s*(-\s*\d+)?\s*(x|×)\s*\d+(\/side)?/gi, " ")
       .replace(/\bx\s*\d+(\/side)?/gi, " ").replace(/\b\d+(-\d+)?\s*(min|s|sec|h)\b(\/side)?/gi, " ").replace(/\/side/g, " ").replace(/[+,;]/g, " ").replace(/\s+/g, " ").trim();
@@ -937,7 +938,7 @@ details.ncd > summary::-webkit-details-marker { display: none; }
       if (info) h += '<div class="rx"><span class="rx-main">' + esc(info) + '</span>' + (it.rest && it.rest !== "-" ? '<span class="rx-sub">Rest ' + esc(it.rest) + '</span>' : "") + '</div>';
       h += '<div class="row"><span></span><button class="donebtn" type="button" data-act="check" data-i="' + i + '" aria-pressed="' + (L.d ? "true" : "false") + '"' + dis + '>' + ICON_CHECK + (L.d ? "Done" : "Mark done") + '</button></div>';
     }
-    if (it.notes && t !== "kegel") h += '<details class="notes"><summary>Coaching notes</summary><p>' + esc(it.notes) + '</p></details>';
+    if (it.notes && t !== "kegel") h += '<details class="notes"><summary>Coaching notes</summary><p>' + linkify(it.notes) + '</p></details>';
     if (t === "sets" || t === "run" || t === "tt") h += '<input class="field wide" data-in="note" data-i="' + i + '" placeholder="Note: how it felt, pain, swaps" value="' + esc(L.note || "") + '" aria-label="Note"' + dis + '>';
     return h + '</article>';
   }
@@ -1180,7 +1181,7 @@ details.ncd > summary::-webkit-details-marker { display: none; }
       guide("Handstand push-up ladder", ["L1 wk 1-6: pike push-ups, chest-to-wall holds", "L2 wk 7-12: elevated pike, 30-45 s holds", "L3 wk 13-20: wall negatives, shoulder taps", "L4 wk 21-30: partial reps to a pad stack, toe/heel pulls", "L5 wk 31-40: full wall reps, 10-20 s free holds", "L6 wk 41-48: 2-4 wall reps, freestanding negatives", "L7 wk 49-52: freestanding attempts"]) +
       guide("Muscle-up ladder", ["Stage 1-2: hangs, scap pulls, negatives, swings", "Stage 3: explosive pull-ups, straight-bar dips", "Stage 4: chest-to-bar, band-assisted (needs 8 pull-ups + 5 bar dips)", "Stage 5: unassisted attempts (needs ~10 pull-ups + 3 chest-to-bar)", "Stage 6-7: EMOM singles, then clean reps"]) +
       guide("Kegels: how", ["Squeeze as if stopping urine and holding in gas, without clenching glutes, thighs or abs. Keep breathing", "Relax fully for as long as you held", "Reverse Kegel: gently let go and lengthen", "Don’t practise by actually stopping urine. Pain or symptoms: see a pelvic-floor physio"]) +
-      '<p class="small muted" style="margin:8px 0 0">Exercise photos: free-exercise-db (public domain). “Watch how” links open a YouTube search.</p>' +
+      '<p class="small muted" style="margin:8px 0 0">Exercise photos: free-exercise-db (public domain). “Watch how” links open a YouTube search (reverse Kegels open a pelvic-floor physio’s video).</p>' +
       '</section>';
     return h;
   }
