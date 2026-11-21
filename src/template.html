@@ -379,8 +379,8 @@ details.ncd > summary::-webkit-details-marker { display: none; }
   ];
   var TEST_COLS = [["w4", 4], ["w12", 12], ["w24", 24], ["w36", 36], ["w48", 48], ["w51", 51]];
   var TEST_COL_FOR_WEEK = { 0: "start", 4: "w4", 12: "w12", 24: "w24", 36: "w36", 48: "w48", 51: "w51" };
-  var DEFAULT_SETTINGS = { startDate: "2026-11-30", age: 26, heightCm: 180, bodyweight: 183, goal5k: 1320, goalBench: 220.5, goalSquat: 275 };
-  var RETIRED_STARTS = ["2026-11-02"]; // earlier default starts (restarted Nov 23 2026): saved settings still on one move to the current default
+  var DEFAULT_SETTINGS = { startDate: "2026-11-23", age: 26, heightCm: 180, bodyweight: 183, goal5k: 1320, goalBench: 220.5, goalSquat: 275 };
+  var RETIRED_STARTS = ["2026-11-02", "2026-11-30"]; // earlier default starts (restarted Nov 23 2026): saved settings still on one move to the current default
   function withStart(s) { if (RETIRED_STARTS.indexOf(s.startDate) >= 0) s.startDate = DEFAULT_SETTINGS.startDate; return s; }
   var LIFTS = { bench: /^Bench press/, squat: /^Back squat/, deadlift: /^Deadlift/, ohp: /^Overhead press/ };
   var LIFT_NAME = { bench: "Bench", squat: "Squat", deadlift: "Deadlift", ohp: "Press" };
