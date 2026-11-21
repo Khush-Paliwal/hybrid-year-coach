@@ -379,7 +379,9 @@ details.ncd > summary::-webkit-details-marker { display: none; }
   ];
   var TEST_COLS = [["w4", 4], ["w12", 12], ["w24", 24], ["w36", 36], ["w48", 48], ["w51", 51]];
   var TEST_COL_FOR_WEEK = { 0: "start", 4: "w4", 12: "w12", 24: "w24", 36: "w36", 48: "w48", 51: "w51" };
-  var DEFAULT_SETTINGS = { startDate: "2026-11-02", age: 26, heightCm: 180, bodyweight: 183, goal5k: 1320, goalBench: 220.5, goalSquat: 275 };
+  var DEFAULT_SETTINGS = { startDate: "2026-11-30", age: 26, heightCm: 180, bodyweight: 183, goal5k: 1320, goalBench: 220.5, goalSquat: 275 };
+  var RETIRED_STARTS = ["2026-11-02"]; // earlier default starts (restarted Nov 23 2026): saved settings still on one move to the current default
+  function withStart(s) { if (RETIRED_STARTS.indexOf(s.startDate) >= 0) s.startDate = DEFAULT_SETTINGS.startDate; return s; }
   var LIFTS = { bench: /^Bench press/, squat: /^Back squat/, deadlift: /^Deadlift/, ohp: /^Overhead press/ };
   var LIFT_NAME = { bench: "Bench", squat: "Squat", deadlift: "Deadlift", ohp: "Press" };
   var MILESTONES = [
@@ -597,7 +599,7 @@ details.ncd > summary::-webkit-details-marker { display: none; }
     return null;
   }
   function applyPath(path, data) {
-    if (path === "app/settings") { state.settings = Object.assign({}, DEFAULT_SETTINGS, data || {}); state.settingsCustom = true; }
+    if (path === "app/settings") { state.settings = withStart(Object.assign({}, DEFAULT_SETTINGS, data || {})); state.settingsCustom = true; }
     else if (path === "app/tests") state.tests = clone(data || {});
     else if (path === "app/milestones") state.milestones = clone(data || {});
     else if (path.indexOf("days/") === 0) state.days[path.slice(5)] = clone(data || {});
@@ -612,7 +614,7 @@ details.ncd > summary::-webkit-details-marker { display: none; }
       var raw = localStorage.getItem(LKEY); if (!raw) return;
       var o = JSON.parse(raw);
       // Settings are kept only once you've changed them (or they came from the cloud), so new defaults reach the phone.
-      if (o.settings && o.settingsSaved) { state.settings = Object.assign({}, DEFAULT_SETTINGS, o.settings); state.settingsCustom = true; }
+      if (o.settings && o.settingsSaved) { state.settings = withStart(Object.assign({}, DEFAULT_SETTINGS, o.settings)); state.settingsCustom = true; }
       state.tests = o.tests || {}; state.milestones = o.milestones || {}; state.days = o.days || {}; state.study = o.study || {};
       (o.outbox || []).forEach(function (p) { outbox[p] = true; outboxVer[p] = 1; });
       state.lastSync = o.lastSync || null;
