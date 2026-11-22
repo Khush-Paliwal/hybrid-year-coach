@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Hybrid Year Coach</title>
-<meta name="theme-color" content="#0f1317">
+<meta name="theme-color" content="#000000">
 <meta name="description" content="Daily workout, food and progress log for a 52-week hybrid training plan, plus a day-by-day study checklist.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
@@ -13,52 +13,56 @@
 <body>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&display=swap">
 <style>
-/* Layout: one-column phone log. Sticky day header, one card per exercise, fixed bottom tabs.
-   Part markers are bumper-plate rings in competition plate colours. */
+/* Layout: one-column phone log. Sticky header, week strip of progress rings, one card per task, fixed bottom tabs.
+   Look (after TickOff): true black, soft rounded cards, one vivid colour per track or part (--c on the card),
+   round ticks, progress rings and streak grids. */
 :root {
-  --bg: #0f1317;
-  --surface: #171c22;
-  --surface-2: #1f262e;
-  --line: #2b333d;
-  --fg: #e9edf1;
-  --muted: #8f9aa6;
-  --faint: #5f6975;
-  --accent: #4a8df7;
-  --accent-fg: #ffffff;
-  --accent-soft: rgba(74, 141, 247, 0.16);
-  --good: #3fb57f;
-  --good-soft: rgba(63, 181, 127, 0.16);
-  --warn: #e3a53a;
-  --warn-soft: rgba(227, 165, 58, 0.16);
-  --bad: #ec6a60;
-  --plate-red: #d9473f;
-  --plate-blue: #3f7fe6;
-  --plate-yellow: #e7bb3a;
-  --plate-green: #3ea76a;
-  --plate-grey: #aab2bc;
-  --font-display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
-  --font-body: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --radius: 14px;
+  --bg: #000000;
+  --surface: #141416;
+  --surface-2: #232326;
+  --line: #2c2c30;
+  --fg: #ffffff;
+  --muted: #8e8e93;
+  --faint: #58585e;
+  --accent: #ffd60a;
+  --accent-fg: #000000;
+  --accent-soft: rgba(255, 214, 10, 0.16);
+  --link: #ffd60a;
+  --good: #2fd6a8;
+  --good-soft: rgba(47, 214, 168, 0.16);
+  --warn: #ff9f0a;
+  --warn-soft: rgba(255, 159, 10, 0.16);
+  --bad: #ff5a5f;
+  --c-yellow: #ffd60a; --c-coral: #ff5a5f; --c-teal: #2fd6a8; --c-purple: #b26bff; --c-blue: #3ea6ff;
+  --c-orange: #ff9f43; --c-pink: #ff6fae; --c-green: #8bdc4b; --c-grey: #8e8e93;
+  --on-c: #000000;
+  --font-display: ui-rounded, "SF Pro Rounded", "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-body: ui-rounded, "SF Pro Rounded", "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --radius: 20px;
   color-scheme: dark;
 }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
-    --bg: #f1f3f6; --surface: #ffffff; --surface-2: #eceff3; --line: #d8dde3; --fg: #121820; --muted: #5a6571; --faint: #8a949f;
-    --accent: #1f6fe0; --accent-fg: #ffffff; --accent-soft: rgba(31, 111, 224, 0.12);
-    --good: #1e8a5a; --good-soft: rgba(30, 138, 90, 0.12); --warn: #b07513; --warn-soft: rgba(176, 117, 19, 0.12); --bad: #c8382e;
-    --plate-red: #c73a33; --plate-blue: #2f6fd6; --plate-yellow: #d2a21c; --plate-green: #2f9259; --plate-grey: #8d96a1;
+    --bg: #ffffff; --surface: #f2f2f5; --surface-2: #e5e5ea; --line: #dcdce1; --fg: #111113; --muted: #6c6c72; --faint: #a1a1a8;
+    --accent: #ffc800; --accent-fg: #000000; --accent-soft: rgba(255, 200, 0, 0.2); --link: #a87a00;
+    --good: #0fa87f; --good-soft: rgba(15, 168, 127, 0.14); --warn: #e08600; --warn-soft: rgba(224, 134, 0, 0.14); --bad: #e5484d;
+    --c-yellow: #f5c000; --c-coral: #f0484e; --c-teal: #12b48a; --c-purple: #9a4dff; --c-blue: #1e8ff0;
+    --c-orange: #f5891f; --c-pink: #ef5596; --c-green: #5cb82a; --c-grey: #8d8d93;
     color-scheme: light;
   }
 }
 :root[data-theme="light"] {
-  --bg: #f1f3f6; --surface: #ffffff; --surface-2: #eceff3; --line: #d8dde3; --fg: #121820; --muted: #5a6571; --faint: #8a949f;
-  --accent: #1f6fe0; --accent-fg: #ffffff; --accent-soft: rgba(31, 111, 224, 0.12);
-  --good: #1e8a5a; --good-soft: rgba(30, 138, 90, 0.12); --warn: #b07513; --warn-soft: rgba(176, 117, 19, 0.12); --bad: #c8382e;
-  --plate-red: #c73a33; --plate-blue: #2f6fd6; --plate-yellow: #d2a21c; --plate-green: #2f9259; --plate-grey: #8d96a1;
+  --bg: #ffffff; --surface: #f2f2f5; --surface-2: #e5e5ea; --line: #dcdce1; --fg: #111113; --muted: #6c6c72; --faint: #a1a1a8;
+  --accent: #ffc800; --accent-fg: #000000; --accent-soft: rgba(255, 200, 0, 0.2); --link: #a87a00;
+  --good: #0fa87f; --good-soft: rgba(15, 168, 127, 0.14); --warn: #e08600; --warn-soft: rgba(224, 134, 0, 0.14); --bad: #e5484d;
+  --c-yellow: #f5c000; --c-coral: #f0484e; --c-teal: #12b48a; --c-purple: #9a4dff; --c-blue: #1e8ff0;
+  --c-orange: #f5891f; --c-pink: #ef5596; --c-green: #5cb82a; --c-grey: #8d8d93;
   color-scheme: light;
 }
+.c-yellow { --c: var(--c-yellow); } .c-coral { --c: var(--c-coral); } .c-teal { --c: var(--c-teal); } .c-purple { --c: var(--c-purple); }
+.c-blue { --c: var(--c-blue); } .c-orange { --c: var(--c-orange); } .c-pink { --c: var(--c-pink); } .c-green { --c: var(--c-green); } .c-grey { --c: var(--c-grey); }
 *, *::before, *::after { box-sizing: border-box; }
 body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.45; }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
@@ -69,8 +73,8 @@ h1, h2, h3 { margin: 0; text-wrap: balance; }
 .num { font-variant-numeric: tabular-nums; }
 
 .wrap { max-width: 580px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 calc(96px + env(safe-area-inset-bottom, 0px)); }
-.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 12px 10px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.brand { font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: 0.02em; text-transform: uppercase; }
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 12px 10px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brand { font-family: var(--font-display); font-weight: 800; font-size: 20px; letter-spacing: 0; }
 .brand small { display: block; font-family: var(--font-body); font-weight: 500; font-size: 12px; letter-spacing: 0; text-transform: none; color: var(--muted); }
 .sync { font-size: 12px; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 .sync i { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); display: inline-block; }
@@ -79,29 +83,42 @@ h1, h2, h3 { margin: 0; text-wrap: balance; }
 .sync.err i { background: var(--bad); }
 
 main { display: flex; flex-direction: column; gap: 14px; padding-top: 14px; }
-.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-.display { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.01em; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.display { font-family: var(--font-display); font-weight: 800; }
 .muted { color: var(--muted); }
 .small { font-size: 13px; }
 
 .daynav { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 8px; }
-.daynav h1 { font-family: var(--font-display); font-size: 34px; line-height: 1.05; font-weight: 700; }
-.iconbtn { width: 44px; height: 44px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; }
+.daynav h1 { font-family: var(--font-display); font-size: 26px; line-height: 1.1; font-weight: 800; }
+.iconbtn { width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--surface); display: grid; place-items: center; }
 .iconbtn svg { width: 20px; height: 20px; }
 .daytitle { text-align: center; min-width: 0; }
+/* Day header + week strip: each day is a ring that fills with the share of that day's plan you ticked */
+.dayhead { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; }
+.dayhead h1 { font-family: var(--font-display); font-size: 28px; line-height: 1.1; font-weight: 800; }
+.dayhead .nav { display: flex; gap: 6px; flex: none; }
+.dayhead .iconbtn { width: 38px; height: 38px; }
+.wkstrip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.wkday { border: 0; background: none; padding: 2px 0; display: flex; flex-direction: column; align-items: center; gap: 5px; color: var(--muted); font-size: 11px; font-weight: 700; }
+.wkday:disabled { opacity: 0.35; cursor: default; }
+.wkday.today .dn { color: var(--link); }
+.ring { --p: 0; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: var(--fg); font-size: 14px; font-weight: 800;
+  background: radial-gradient(closest-side, var(--bg) 80%, transparent 81% 100%), conic-gradient(var(--accent) calc(var(--p) * 1%), var(--surface-2) 0); }
+.ring b { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; }
+.wkday.on .ring b { background: var(--fg); color: var(--bg); }
 
-.banner { border-radius: 12px; padding: 12px 14px; background: var(--accent-soft); font-size: 14px; display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.banner { border-radius: 16px; padding: 12px 14px; background: var(--accent-soft); font-size: 14px; display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
 .banner.warn { background: var(--warn-soft); }
-.banner button { border: 0; background: var(--accent); color: var(--accent-fg); border-radius: 10px; padding: 8px 12px; font-weight: 600; }
+.banner button { border: 0; background: var(--accent); color: var(--accent-fg); border-radius: 999px; padding: 8px 14px; font-weight: 700; }
 
-.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-.panel h2 { font-family: var(--font-display); font-size: 22px; font-weight: 700; }
-.session-title { font-family: var(--font-display); font-size: 26px; font-weight: 700; line-height: 1.1; }
+.panel { background: var(--surface); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.panel h2 { font-family: var(--font-display); font-size: 20px; font-weight: 800; }
+.session-title { font-family: var(--font-display); font-size: 22px; font-weight: 800; line-height: 1.15; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: var(--surface-2); color: var(--muted); }
 .chip.good { background: var(--good-soft); color: var(--good); }
 .chip.warn { background: var(--warn-soft); color: var(--warn); }
-.chip.accent { background: var(--accent-soft); color: var(--accent); }
+.chip.accent { background: var(--accent-soft); color: var(--link); }
 .chip.bad { background: var(--surface-2); color: var(--bad); }
 .progress { height: 8px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
 .progress > span { display: block; height: 100%; background: var(--accent); border-radius: 999px; transition: width 0.25s ease; }
@@ -109,24 +126,25 @@ main { display: flex; flex-direction: column; gap: 14px; padding-top: 14px; }
 .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 
 .items { display: flex; flex-direction: column; gap: 10px; }
-.ex { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-.ex.is-done { border-color: color-mix(in srgb, var(--good) 45%, var(--line)); }
-.ex-h { display: grid; grid-template-columns: 22px 1fr auto; gap: 10px; align-items: start; }
-.plate { width: 22px; height: 22px; border-radius: 50%; border: 6px solid var(--plate-grey); margin-top: 2px; background: transparent; }
-.plate.red { border-color: var(--plate-red); }
-.plate.blue { border-color: var(--plate-blue); }
-.plate.yellow { border-color: var(--plate-yellow); }
-.plate.green { border-color: var(--plate-green); }
+.ex { background: var(--surface); border-radius: var(--radius); padding: 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.ex.is-done { box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--c, var(--good)) 60%, transparent); }
+.ex-h { display: grid; grid-template-columns: 36px 1fr auto; gap: 12px; align-items: center; }
+/* Card icon: a soft tile in the card's colour (the track or part), with a solid dot */
+.plate { width: 36px; height: 36px; border-radius: 12px; background: color-mix(in srgb, var(--c, var(--c-grey)) 22%, var(--surface-2)); display: grid; place-items: center; }
+.plate::after { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--c, var(--c-grey)); }
 .ex-t { min-width: 0; }
-.part { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-.ex-t h3 { font-size: 16px; font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; }
-.ex-state { font-size: 13px; font-weight: 600; color: var(--muted); white-space: nowrap; }
-.ex-state.done { color: var(--good); }
+.part { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.ex-t h3 { font-size: 16px; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
+/* Card state: a ring that fills as you tick (--p = percent), a solid check once done */
+.ex-state { --p: 0; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 800; color: var(--muted); white-space: nowrap;
+  background: radial-gradient(closest-side, var(--surface) 78%, transparent 79% 100%), conic-gradient(var(--c, var(--accent)) calc(var(--p) * 1%), var(--surface-2) 0); }
+.ex-state.done { background: var(--c, var(--good)); color: var(--on-c); }
+.ex-state svg { width: 20px; height: 20px; }
 .rx { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; }
-.rx-main { font-family: var(--font-display); font-size: 21px; font-weight: 600; letter-spacing: 0.01em; }
+.rx-main { font-family: var(--font-display); font-size: 19px; font-weight: 800; }
 .rx-sub { font-size: 13px; color: var(--muted); }
 .prev { font-size: 13px; color: var(--muted); }
-.notes summary { font-size: 13px; color: var(--accent); cursor: pointer; list-style: none; }
+.notes summary { font-size: 13px; color: var(--link); font-weight: 600; cursor: pointer; list-style: none; }
 .notes summary::-webkit-details-marker { display: none; }
 .notes p { margin: 6px 0 0; font-size: 14px; color: var(--muted); }
 
@@ -135,48 +153,49 @@ main { display: flex; flex-direction: column; gap: 14px; padding-top: 14px; }
 .set.nw { grid-template-columns: 26px minmax(0, 1fr) 76px 44px; }
 .set.chk { grid-template-columns: 26px minmax(0, 1fr) 30px 44px; }
 .set.chk.kg { grid-template-columns: 26px minmax(0, 1fr) 44px; }
-.how-mini { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; color: var(--muted); font-size: 13px; font-weight: 700; text-decoration: none; }
+.how-mini { width: 30px; height: 30px; border-radius: 50%; background: var(--surface-2); display: grid; place-items: center; color: var(--muted); font-size: 13px; font-weight: 800; text-decoration: none; }
 .howto { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.how { color: var(--accent); font-weight: 600; font-size: 14px; text-decoration: none; padding: 6px 0; }
-.demo { position: relative; width: 132px; aspect-ratio: 3 / 2; max-width: 100%; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: var(--surface-2); padding: 0; flex: none; }
+.how { color: var(--link); font-weight: 700; font-size: 14px; text-decoration: none; padding: 6px 0; }
+.demo { position: relative; width: 132px; aspect-ratio: 3 / 2; max-width: 100%; border-radius: 12px; overflow: hidden; background: var(--surface-2); padding: 0; flex: none; }
 .demo.big { width: 100%; }
 .demo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .demo img + img { animation: demoflip 1.8s steps(1, end) infinite; }
 @keyframes demoflip { 0% { opacity: 0; } 50% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .demo img + img { animation: none; opacity: 0; } .demo.big img + img { opacity: 1; } }
 .set.chk .tg { color: var(--fg); }
-.set.chk.done .tg { color: var(--good); }
-.set-h { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); }
-.set .n { font-weight: 700; color: var(--muted); text-align: center; }
+.set.chk.done .tg { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--faint); }
+.set-h { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--faint); }
+.set .n { font-weight: 800; color: var(--faint); text-align: center; }
 .set .tg { font-size: 14px; color: var(--muted); overflow-wrap: anywhere; }
-.set.done .tg, .set.done .n { color: var(--good); }
-.field { width: 100%; height: 42px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); padding: 0 10px; font-variant-numeric: tabular-nums; font-size: 16px; text-align: center; }
+.set.done .tg, .set.done .n { color: var(--c, var(--good)); }
+.field { width: 100%; height: 42px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2); padding: 0 10px; font-variant-numeric: tabular-nums; font-size: 16px; text-align: center; }
 .field::placeholder { color: var(--faint); }
 .field.wide { text-align: left; }
-.tick { width: 44px; height: 42px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); display: grid; place-items: center; color: var(--faint); }
-.tick svg { width: 20px; height: 20px; }
-.tick[aria-pressed="true"] { background: var(--good); border-color: var(--good); color: #fff; }
-.linkbtn { align-self: flex-start; border: 0; background: none; color: var(--accent); font-weight: 600; padding: 4px 0; font-size: 14px; }
-.donebtn { height: 44px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2); font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 16px; }
+/* Ticks are circles: empty ring until done, then filled with the card's colour */
+.tick { width: 38px; height: 38px; justify-self: center; border-radius: 50%; border: 2px solid var(--line); background: transparent; display: grid; place-items: center; color: transparent; }
+.tick svg { width: 18px; height: 18px; }
+.tick[aria-pressed="true"] { background: var(--c, var(--good)); border-color: var(--c, var(--good)); color: var(--on-c); }
+.linkbtn { align-self: flex-start; border: 0; background: none; color: var(--link); font-weight: 700; padding: 4px 0; font-size: 14px; }
+.donebtn { height: 44px; border-radius: 999px; border: 0; background: var(--surface-2); font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 18px; }
 .donebtn svg { width: 18px; height: 18px; }
-.donebtn[aria-pressed="true"] { background: var(--good); border-color: var(--good); color: #fff; }
+.donebtn[aria-pressed="true"] { background: var(--c, var(--good)); color: var(--on-c); }
 .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
 .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 label.lab { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 600; color: var(--muted); min-width: 0; }
 .kegels { display: flex; gap: 8px; flex-wrap: wrap; }
-.pill { min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface-2); font-weight: 600; font-size: 14px; }
-.pill[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+.pill { min-height: 40px; padding: 0 14px; border-radius: 999px; border: 0; background: var(--surface-2); font-weight: 700; font-size: 14px; }
+.pill[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); }
 .seg { display: flex; gap: 6px; flex-wrap: wrap; }
 .seg .pill { min-width: 44px; padding: 0 10px; }
-.primary { height: 48px; border: 0; border-radius: 12px; background: var(--accent); color: var(--accent-fg); font-weight: 700; font-size: 16px; padding: 0 18px; }
-.secondary { height: 48px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); font-weight: 600; padding: 0 16px; }
+.primary { height: 50px; border: 0; border-radius: 999px; background: var(--accent); color: var(--accent-fg); font-weight: 800; font-size: 16px; padding: 0 20px; }
+.secondary { height: 50px; border-radius: 999px; border: 0; background: var(--surface-2); font-weight: 700; padding: 0 18px; }
 .btnrow { display: flex; gap: 8px; flex-wrap: wrap; }
 .btnrow > * { flex: 1 1 140px; }
 .result { font-size: 14px; }
-.result b { font-family: var(--font-display); font-size: 20px; }
+.result b { font-family: var(--font-display); font-size: 20px; font-weight: 800; }
 
 .weekhead { display: grid; grid-template-columns: 44px 1fr 44px; gap: 8px; align-items: center; }
-.weekhead h1 { font-family: var(--font-display); font-size: 30px; text-align: center; }
+.weekhead h1 { font-family: var(--font-display); font-size: 26px; font-weight: 800; text-align: center; }
 .phasebar { display: flex; gap: 2px; height: 10px; border-radius: 999px; overflow: hidden; }
 .phasebar span { background: var(--surface-2); }
 .phasebar span.on { background: var(--accent); }
@@ -184,31 +203,31 @@ label.lab { display: flex; flex-direction: column; gap: 4px; font-size: 12px; fo
 .daylist { display: flex; flex-direction: column; }
 .dayrow { display: grid; grid-template-columns: 58px 1fr auto; gap: 10px; align-items: center; padding: 12px 4px; border-top: 1px solid var(--line); background: none; border-left: 0; border-right: 0; border-bottom: 0; text-align: left; width: 100%; }
 .dayrow:first-child { border-top: 0; }
-.dayrow .d { font-family: var(--font-display); font-size: 18px; font-weight: 600; line-height: 1.1; }
+.dayrow .d { font-family: var(--font-display); font-size: 16px; font-weight: 800; line-height: 1.1; }
 .dayrow .d small { display: block; font-family: var(--font-body); font-size: 12px; color: var(--muted); font-weight: 500; }
 .dayrow .s { font-weight: 600; font-size: 15px; min-width: 0; }
-.dayrow.today { background: var(--accent-soft); border-radius: 10px; }
+.dayrow.today { background: var(--accent-soft); border-radius: 14px; }
 
 .goals { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
-.goal { background: var(--surface-2); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.goal .v { font-family: var(--font-display); font-size: 26px; font-weight: 700; line-height: 1; }
-.goal .v small { font-family: var(--font-body); font-size: 13px; font-weight: 500; color: var(--muted); }
+.goal { background: var(--surface-2); border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.goal .v { font-family: var(--font-display); font-size: 24px; font-weight: 800; line-height: 1; }
+.goal .v small { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--muted); }
 .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-.stat { background: var(--surface-2); border-radius: 12px; padding: 10px 12px; }
-.stat b { display: block; font-family: var(--font-display); font-size: 26px; line-height: 1.1; }
+.stat { background: var(--surface-2); border-radius: 16px; padding: 10px 12px; }
+.stat b { display: block; font-family: var(--font-display); font-size: 24px; font-weight: 800; line-height: 1.1; }
 .stat span { font-size: 12px; color: var(--muted); }
 .chart { width: 100%; height: auto; display: block; }
 .chart text { fill: var(--muted); font-size: 11px; font-family: var(--font-body); }
 .charttip { font-size: 13px; color: var(--muted); min-height: 18px; }
 .mile { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center; padding: 8px 0; border-top: 1px solid var(--line); background: none; border-left: 0; border-right: 0; border-bottom: 0; width: 100%; text-align: left; }
 .mile:first-child { border-top: 0; }
-.mile .box { width: 26px; height: 26px; border-radius: 8px; border: 2px solid var(--line); display: grid; place-items: center; color: transparent; }
+.mile .box { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; color: transparent; }
 .mile .box svg { width: 16px; height: 16px; }
-.mile[aria-pressed="true"] .box { background: var(--good); border-color: var(--good); color: #fff; }
+.mile[aria-pressed="true"] .box { background: var(--good); border-color: var(--good); color: var(--on-c); }
 
 .foodgrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
-.foodgrid div { background: var(--surface-2); border-radius: 12px; padding: 10px; }
-.foodgrid b { display: block; font-family: var(--font-display); font-size: 22px; line-height: 1.1; }
+.foodgrid div { background: var(--surface-2); border-radius: 16px; padding: 10px; }
+.foodgrid b { display: block; font-family: var(--font-display); font-size: 20px; font-weight: 800; line-height: 1.1; }
 .foodgrid span { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
 .quick { display: flex; flex-wrap: wrap; gap: 8px; }
 .quick .pill { font-weight: 500; }
@@ -230,39 +249,40 @@ details.guide summary { font-weight: 600; cursor: pointer; }
 details.guide ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); font-size: 14px; display: flex; flex-direction: column; gap: 4px; }
 
 .timer { position: fixed; left: 0; right: 0; bottom: calc(64px + env(safe-area-inset-bottom, 0px)); z-index: 6; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 8px; }
-.timer-in { max-width: 548px; margin: 0 auto; background: var(--fg); color: var(--bg); border-radius: 14px; padding: 10px 12px; display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px; align-items: center; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3); }
-.timer-in b { font-family: var(--font-display); font-size: 26px; font-variant-numeric: tabular-nums; }
+.timer-in { max-width: 548px; margin: 0 auto; background: var(--fg); color: var(--bg); border-radius: 20px; padding: 10px 12px; display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px; align-items: center; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3); }
+.timer-in b { font-family: var(--font-display); font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; }
 .timer-in button { height: 38px; min-width: 44px; border-radius: 10px; border: 0; background: color-mix(in srgb, var(--bg) 14%, var(--fg)); color: var(--bg); font-weight: 700; padding: 0 10px; }
 .timer-bar { grid-column: 1 / -1; height: 4px; border-radius: 999px; background: color-mix(in srgb, var(--bg) 20%, var(--fg)); overflow: hidden; }
 .timer-bar span { display: block; height: 100%; background: var(--accent); }
 
-.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 7; background: var(--surface); border-top: 1px solid var(--line); padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(8px, env(safe-area-inset-right, 0px)); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 7; background: color-mix(in srgb, var(--bg) 88%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-top: 1px solid var(--line); padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(8px, env(safe-area-inset-right, 0px)); padding-bottom: env(safe-area-inset-bottom, 0px); }
 .tabs-in { max-width: 580px; margin: 0 auto; display: grid; grid-template-columns: repeat(5, 1fr); }
-.tab { border: 0; background: none; height: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--muted); font-size: 11px; font-weight: 600; }
-.tab svg { width: 22px; height: 22px; }
-.tab[aria-current="page"] { color: var(--accent); }
+.tab { border: 0; background: none; height: 62px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--faint); font-size: 11px; font-weight: 700; }
+.tab svg { width: 36px; height: 30px; padding: 4px 7px; border-radius: 10px; }
+.tab[aria-current="page"] { color: var(--fg); }
+.tab[aria-current="page"] svg { background: var(--fg); color: var(--bg); }
 .empty { color: var(--muted); font-size: 14px; padding: 8px 0; }
 
 /* Start screen (Study or Exercise) and the Study checklist */
 .brandrow { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.iconbtn.sm { width: 38px; height: 38px; border-radius: 10px; flex: none; }
+.iconbtn.sm { width: 38px; height: 38px; border-radius: 50%; flex: none; }
 .home { display: flex; flex-direction: column; gap: 14px; }
-.home h1 { font-family: var(--font-display); font-size: 34px; line-height: 1.05; font-weight: 700; }
-.choice { display: grid; grid-template-columns: 56px minmax(0, 1fr) 20px; gap: 14px; align-items: center; width: 100%; text-align: left; padding: 20px 16px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface); }
-.choice .ico { width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
-.choice.study .ico { background: var(--warn-soft); color: var(--warn); }
+.home h1 { font-family: var(--font-display); font-size: 30px; line-height: 1.1; font-weight: 800; }
+.choice { display: grid; grid-template-columns: 56px minmax(0, 1fr) 20px; gap: 14px; align-items: center; width: 100%; text-align: left; padding: 20px 16px; border-radius: var(--radius); border: 0; background: var(--surface); }
+.choice .ico { width: 56px; height: 56px; border-radius: 18px; display: grid; place-items: center; background: color-mix(in srgb, var(--c-coral) 22%, var(--surface-2)); color: var(--c-coral); }
+.choice.study .ico { background: color-mix(in srgb, var(--c-yellow) 22%, var(--surface-2)); color: var(--c-yellow); }
 .choice .ico svg { width: 30px; height: 30px; }
-.choice b { display: block; font-family: var(--font-display); font-size: 28px; line-height: 1.05; }
+.choice b { display: block; font-family: var(--font-display); font-size: 24px; font-weight: 800; line-height: 1.1; }
 .choice .sub { display: block; font-size: 13px; color: var(--muted); margin-top: 2px; overflow-wrap: anywhere; }
 .choice .chev { color: var(--faint); }
 .choice .chev svg { width: 20px; height: 20px; }
 .blockh { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 4px 2px 0; }
-.blockh h2 { font-family: var(--font-display); font-size: 21px; font-weight: 700; }
+.blockh h2 { font-family: var(--font-display); font-size: 19px; font-weight: 800; }
 .src { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
-.src a { color: var(--accent); text-decoration: none; font-weight: 600; }
+.src a { color: var(--link); text-decoration: none; font-weight: 700; }
 .ncrow { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
 .ncrow:first-child { border-top: 0; }
-.ncrow .nn { font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--muted); text-align: center; }
+.ncrow .nn { font-family: var(--font-display); font-size: 16px; font-weight: 800; color: var(--muted); text-align: center; }
 .ncrow b { font-weight: 600; overflow-wrap: anywhere; }
 .ncrow .small { display: block; }
 details.ncd { border-top: 1px solid var(--line); }
@@ -274,6 +294,21 @@ details.ncd > summary::-webkit-details-marker { display: none; }
 .set.part-done .tg { font-weight: 600; }
 .gate { display: flex; flex-direction: column; gap: 6px; padding: 12px 0; border-top: 1px solid var(--line); }
 .gate:first-child { border-top: 0; }
+/* Streak cards (Progress): one per track, a column per week, a square per day */
+.habits { display: flex; flex-direction: column; gap: 10px; }
+.habit { background: var(--surface); border-radius: var(--radius); padding: 14px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.habit-h { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+.habit-h b { display: block; font-weight: 800; overflow-wrap: anywhere; }
+.habit-h small { display: block; font-size: 12px; color: var(--muted); font-weight: 600; }
+.dots { display: grid; grid-template-rows: repeat(7, auto); grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 2px; }
+.dots i { aspect-ratio: 1; border-radius: 2px; background: color-mix(in srgb, var(--c) 9%, var(--surface-2)); }
+.dots i.x { background: transparent; }
+.dots i.m { background: color-mix(in srgb, var(--c) 30%, var(--surface-2)); }
+.dots i.h { background: color-mix(in srgb, var(--c) 62%, var(--surface-2)); }
+.dots i.d { background: var(--c); }
+.dots i.t { box-shadow: 0 0 0 1.5px var(--fg); }
+.dotkey { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; color: var(--muted); font-weight: 600; }
+.dotkey i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 @media (max-width: 380px) {
   .set { grid-template-columns: 22px minmax(0, 1fr) 62px 54px 42px; gap: 6px; }
@@ -350,7 +385,7 @@ details.ncd > summary::-webkit-details-marker { display: none; }
   var STID_ROWS = {}; // task id -> every [date, row key] it occupies (split tasks have several)
   SDAYS.forEach(function (sd, ix) { sd.rows.forEach(function (r) { (STID_ROWS[r.tid] = STID_ROWS[r.tid] || []).push([ix, r.key]); }); });
   var STRACKS = ["Strang 18.06", "MIT 18.02", "Stat 110", "Wasserman", "Boyd", "Gate check", "ISLP", "ESL", "Tsay", "Buffer", "Review"];
-  var TRACK_PLATE = { "Strang 18.06": "blue", "MIT 18.02": "green", "Stat 110": "red", Wasserman: "yellow", Boyd: "yellow", "Gate check": "yellow", ISLP: "green", ESL: "blue", Tsay: "red", LeetCode: "yellow" };
+  var TRACK_PLATE = { "Strang 18.06": "yellow", "MIT 18.02": "teal", "Stat 110": "coral", Wasserman: "orange", Boyd: "purple", "Gate check": "blue", ISLP: "green", ESL: "blue", Tsay: "pink", LeetCode: "purple", Buffer: "grey", Review: "grey" };
 
   /* Exercise demos: start/end photos from free-exercise-db (public domain), flipped like a GIF. */
   var DEMO_RULES = JSON.parse(document.getElementById("demo-data").textContent).map(function (r) { return [new RegExp(r[0], "i"), r[1]]; });
@@ -509,12 +544,16 @@ details.ncd > summary::-webkit-details-marker { display: none; }
     if (typeof r.sets === "number" && r.sets >= 1 && ["Strength", "Accessory", "Skill", "Core", "Optional"].indexOf(it.part) >= 0) return "sets";
     return "check";
   }
-  function plateFor(part) {
-    if (part === "Strength" || part === "Test") return "red";
-    if (part === "Run") return "blue";
-    if (part === "Skill") return "yellow";
-    if (part === "Accessory" || part === "Core" || part === "Optional") return "green";
-    return "";
+  function plateFor(part) { // card colour (c-*) for an exercise part
+    if (part === "Strength" || part === "Test") return "coral";
+    if (part === "Run") return "teal";
+    if (part === "Skill") return "purple";
+    if (part === "Accessory" || part === "Core" || part === "Optional") return "blue";
+    if (part === "Warm-up") return "yellow";
+    if (part === "Cool-down" || part === "Mobility" || part === "Recovery") return "green";
+    if (part === "Daily") return "pink";
+    if (part === "Check-in") return "orange";
+    return "grey";
   }
   function wantsWeight(it, r) { return r.kind === "bar" || /RPE/.test(String(r.load || "")) || /^Weighted/i.test(it.ex); }
   function kegelCount(it) { var m = String(it.notes || "").match(/(\d) times today/); return m ? Number(m[1]) : 3; }
@@ -835,9 +874,7 @@ details.ncd > summary::-webkit-details-marker { display: none; }
   function renderToday() {
     var date = state.date, pd = planDay(date), t = today(), h = "";
     var weekTxt = pd && pd.week === 0 ? "Week 0 · Baseline week" : pd ? ["Week " + pd.week, phaseLabel(pd.week), weekTypeLabel(pd.week)].filter(function (x, ix, a) { return a.indexOf(x) === ix && x !== "Training"; }).join(" · ") : "Outside the plan";
-    h += '<section class="daynav"><button class="iconbtn" type="button" data-act="day-prev" aria-label="Previous day">' + ICON_L + '</button>' +
-      '<div class="daytitle"><div class="eyebrow">' + esc(weekTxt) + '</div><h1>' + esc(fmtDate(date, { weekday: "long", day: "numeric", month: "short" })) + '</h1></div>' +
-      '<button class="iconbtn" type="button" data-act="day-next" aria-label="Next day">' + ICON_R + '</button></section>';
+    h += dayHeader(date, weekTxt, "day") + weekStrip(date, "day", exPct);
     var si = planIndex(t);
     var firstDay = addDays(state.settings.startDate, 1 - BASE.length);
     if (si < -BASE.length && date >= addDays(state.settings.startDate, -BASE.length)) {
@@ -873,9 +910,9 @@ details.ncd > summary::-webkit-details-marker { display: none; }
     if (t === "sets") { var c = (L.sets || []).filter(function (s) { return s && s.d; }).length; stateTxt = c + "/" + r.sets; }
     else if (t === "list") stateTxt = (L.c || []).filter(Boolean).length + "/" + it.subs.length;
     else if (t === "kegel") stateTxt = (L.k || []).filter(Boolean).length + "/" + kegelCount(it);
-    var h = '<article class="ex' + (done >= 0.99 ? " is-done" : "") + '" data-card="' + i + '">' +
-      '<header class="ex-h"><span class="plate ' + plate + '" aria-hidden="true"></span><div class="ex-t"><div class="part">' + esc(it.part) + '</div><h3>' + esc(it.ex) + '</h3></div>' +
-      '<span class="ex-state' + (done >= 0.99 ? " done" : "") + '">' + (done >= 0.99 ? "Done" : esc(stateTxt)) + '</span></header>';
+    var h = '<article class="ex c-' + plate + (done >= 0.99 ? " is-done" : "") + '" data-card="' + i + '">' +
+      '<header class="ex-h"><span class="plate" aria-hidden="true"></span><div class="ex-t"><div class="part">' + esc(it.part) + '</div><h3>' + esc(it.ex) + '</h3></div>' +
+      '<span class="ex-state' + (done >= 0.99 ? " done" : "") + '" style="--p:' + Math.round(done * 100) + '"' + (done >= 0.99 ? ' aria-label="Done"' : '') + '>' + (done >= 0.99 ? ICON_CHECK : esc(stateTxt)) + '</span></header>';
     if (t !== "run" && t !== "tt" && t !== "kegel" && (t !== "list" || it.part === "Daily")) h += howTo(it.ex);
 
     if (t === "sets") {
@@ -1090,6 +1127,14 @@ details.ncd > summary::-webkit-details-marker { display: none; }
     var total = Object.keys(sessByWeek).reduce(function (a, k) { return a + sessByWeek[k]; }, 0);
     var kmTotal = 0; Object.keys(state.days).forEach(function (date) { var d = state.days[date]; for (var k in (d.items || {})) { var L = d.items[k]; if (L && L.run && L.run.d) kmTotal += num(L.run.km) || 0; } });
     h += '<section class="panel"><h2>This week</h2><div class="stats"><div class="stat"><b class="num">' + (sessByWeek[wNow] || 0) + '/5</b><span>Sessions</span></div><div class="stat"><b class="num">' + Math.round(runByWeek[wNow] || 0) + '</b><span>Run minutes</span></div><div class="stat"><b class="num">' + total + '</b><span>Sessions all year</span></div></div></section>';
+    var tDays = [], day0 = addDays(state.settings.startDate, -BASE.length), tNow = today();
+    for (var j = 0; j < BASE.length + DAYS.length; j++) {
+      var dj = addDays(day0, j), pj = planDay(dj), gj = state.days[dj] || {};
+      if (!pj || pj.kind === "rest") { tDays.push({ date: dj, s: "x" }); continue; }
+      var fj = gj.status === "skipped" ? 0 : dayProgress(dj, pj);
+      tDays.push({ date: dj, s: gj.status === "done" || fj >= 0.99 ? "d" : fj > 0 ? "h" : dj < tNow ? "m" : "" });
+    }
+    h += DOT_KEY.replace("c-yellow", "c-coral") + '<div class="habits">' + streakCard("Training days", "coral", tDays, total + " sessions so far") + '</div>';
 
     var k5 = latestTest("k5"), k5Start = est("k5"), k5Goal = Number(state.settings.goal5k);
     var k5Cur = k5 || k5Start;
@@ -1300,9 +1345,7 @@ details.ncd > summary::-webkit-details-marker { display: none; }
   function renderStudyToday() {
     var date = state.sdate, sd = sDay(date), t = today(), h = "";
     var eyebrow = sd ? "Day " + (sIndex(date) + 1) + " of " + SDAYS.length + " · Week " + sd.week + " · " + phaseShort(sd.phase) : "Outside the study plan";
-    h += '<section class="daynav"><button class="iconbtn" type="button" data-act="sday-prev" aria-label="Previous day">' + ICON_L + '</button>' +
-      '<div class="daytitle"><div class="eyebrow">' + esc(eyebrow) + '</div><h1>' + esc(fmtDate(date, { weekday: "long", day: "numeric", month: "short" })) + '</h1></div>' +
-      '<button class="iconbtn" type="button" data-act="sday-next" aria-label="Next day">' + ICON_R + '</button></section>';
+    h += dayHeader(date, eyebrow, "sday") + weekStrip(date, "sday", studyPct);
     if (t < SP.start) { var dl = dayNum(SP.start) - dayNum(t); h += '<div class="banner"><span>Your study plan starts ' + esc(fmtDate(SP.start, { weekday: "long", day: "numeric", month: "long" })) + ' (in ' + dl + (dl === 1 ? ' day' : ' days') + '). This is a preview.</span></div>'; }
     else if (date !== t && t <= SP.end) h += '<div class="banner warn"><span>You are looking at ' + (date < t ? "a past" : "a future") + ' day.</span><button type="button" data-act="sday-today">Back to today</button></div>';
     if (!sd) return h + '<section class="panel"><p class="muted">No study planned for this date. The plan runs ' + esc(fmtDate(SP.start, { day: "numeric", month: "short", year: "numeric" })) + ' to ' + esc(fmtDate(SP.end, { day: "numeric", month: "short", year: "numeric" })) + '.</p></section>';
@@ -1322,13 +1365,75 @@ details.ncd > summary::-webkit-details-marker { display: none; }
     });
     return h;
   }
+  /* Day header (big date, small prev/next) and the week strip: Mon-Sun of the shown day, each a ring that fills with
+     that day's progress. pctFor(date) gives 0..1, or null when nothing is planned (the day is then disabled). */
+  function dayHeader(date, eyebrow, act) {
+    var title = date === today() ? "Today, " + fmtDate(date, { day: "numeric", month: "short" }) : fmtDate(date, { weekday: "long", day: "numeric", month: "short" });
+    return '<section class="dayhead"><div class="daytitle" style="text-align:left"><div class="eyebrow">' + esc(eyebrow) + '</div><h1>' + esc(title) + '</h1></div>' +
+      '<div class="nav"><button class="iconbtn" type="button" data-act="' + act + '-prev" aria-label="Previous day">' + ICON_L + '</button>' +
+      '<button class="iconbtn" type="button" data-act="' + act + '-next" aria-label="Next day">' + ICON_R + '</button></div></section>';
+  }
+  function weekStrip(date, act, pctFor) {
+    var mon = addDays(date, -((parseYmd(date).getDay() + 6) % 7)), t = today(), h = '<section class="wkstrip" aria-label="Week">';
+    for (var i = 0; i < 7; i++) {
+      var d = addDays(mon, i), p = pctFor(d);
+      h += '<button class="wkday' + (d === date ? " on" : "") + (d === t ? " today" : "") + '" type="button" data-act="' + act + '-pick" data-date="' + d + '"' +
+        (d === date ? ' aria-current="date"' : '') + (p == null ? " disabled" : "") + ' aria-label="' + esc(fmtDate(d, { weekday: "long", day: "numeric", month: "short" }) +
+        (p == null ? ", nothing planned" : ", " + Math.round(p * 100) + "% done")) + '"><span class="dn">' + esc(fmtDate(d, { weekday: "short" })) + '</span>' +
+        '<span class="ring" style="--p:' + Math.round((p || 0) * 100) + '"><b>' + parseYmd(d).getDate() + '</b></span></button>';
+    }
+    return h + '</section>';
+  }
+  /* Streak cards (Progress). A day is: x nothing planned, d all done, h partly done, m missed (past), "" still to come. */
+  function studyDots(match) {
+    var t = today();
+    return SDAYS.map(function (sd, ix) {
+      var date = sDateAt(ix), rows = sd.rows.filter(match);
+      if (!rows.length) return { date: date, s: "x" };
+      var dn = rows.filter(function (r) { return sDone(date, r); }).length;
+      return { date: date, s: dn === rows.length ? "d" : dn ? "h" : date < t ? "m" : "" };
+    });
+  }
+  function streakOf(days) { // fully done planned days in a row, counting back from today (today counts once it's done)
+    var t = today(), n = 0;
+    for (var i = days.length - 1; i >= 0; i--) {
+      var c = days[i]; if (c.date > t || c.s === "x") continue;
+      if (c.s === "d") n++; else if (c.date !== t) break;
+    }
+    return n;
+  }
+  function dotGrid(days) { // one column per week (Monday on top): the last 12 weeks and the next 13
+    if (!days.length) return "";
+    var t = today(), first = days[0].date, lead = (parseYmd(first).getDay() + 6) % 7, cells = [];
+    for (var k = 0; k < lead; k++) cells.push(null);
+    cells = cells.concat(days);
+    var weeks = Math.ceil(cells.length / 7), tw = Math.floor((dayNum(t) - dayNum(first) + lead) / 7);
+    var w0 = Math.max(0, Math.min(tw - 12, weeks - 26)), w1 = Math.min(weeks, w0 + 26);
+    var h = '<div class="dots" style="grid-template-columns:repeat(' + (w1 - w0) + ',minmax(0,1fr))" aria-hidden="true">';
+    for (var i = w0 * 7; i < w1 * 7; i++) { var c = cells[i]; h += '<i class="' + (c ? c.s + (c.date === t ? " t" : "") : "x") + '"></i>'; }
+    return h + '</div>';
+  }
+  function streakCard(name, color, days, sub) {
+    var planned = days.filter(function (c) { return c.s !== "x"; }), done = planned.filter(function (c) { return c.s === "d"; }).length;
+    var p = planned.length ? Math.round(100 * done / planned.length) : 0, st = streakOf(days);
+    return '<div class="habit c-' + color + '"><div class="habit-h"><span class="plate" aria-hidden="true"></span><div><b>' + esc(name) + '</b>' +
+      '<small>Streak: ' + st + (st === 1 ? " day" : " days") + (sub ? " · " + esc(sub) : "") + '</small></div>' +
+      '<span class="ex-state" style="--p:' + p + '" aria-label="' + p + '% of planned days done">' + p + '%</span></div>' + dotGrid(days) + '</div>';
+  }
+  var DOT_KEY = '<div class="dotkey c-yellow"><span><i style="background:var(--c)"></i>Done</span><span><i style="background:color-mix(in srgb, var(--c) 62%, var(--surface-2))"></i>Part done</span>' +
+    '<span><i style="background:color-mix(in srgb, var(--c) 30%, var(--surface-2))"></i>Missed</span><span><i style="background:color-mix(in srgb, var(--c) 9%, var(--surface-2))"></i>To come</span></div>';
+  function studyPct(d) { var sd = sDay(d); if (!sd || !sd.rows.some(function (r) { return !isLC(r); })) return null; var hr = sHours(d, sd); return hr.plan ? hr.done / hr.plan : 0; }
+  function exPct(d) { var pd = planDay(d); return pd ? dayProgress(d, pd) : null; }
+  function ringState(done, ticked, n) { // card state: a ring that fills with the ticks, a solid check once done
+    return '<span class="ex-state' + (done ? " done" : "") + '" style="--p:' + (done ? 100 : n ? Math.round(100 * ticked / n) : 0) + '"' + (done ? ' aria-label="Done"' : '') + '>' + (done ? ICON_CHECK : ticked + "/" + n) + '</span>';
+  }
   function renderStudyItem(date, r) {
     if (isLC(r)) return renderLeetCode(date, r);
     var T = STASK[r.tid] || { track: "", title: r.tid, steps: [], tip: "", src: "" }, L = sPeek(date, r.key) || {}, done = !!L.d, dis = state.loaded && !state.readOnly ? "" : " disabled";
     var n = stepsFor(r.tid).length, ticked = stepsTicked(r.tid);
-    var h = '<article class="ex' + (done ? " is-done" : "") + '"><header class="ex-h"><span class="plate ' + (TRACK_PLATE[T.track] || "") + '" aria-hidden="true"></span>' +
+    var h = '<article class="ex c-' + (TRACK_PLATE[T.track] || "grey") + (done ? " is-done" : "") + '"><header class="ex-h"><span class="plate" aria-hidden="true"></span>' +
       '<div class="ex-t"><div class="part">' + esc([T.track, r.tid, r.nparts ? "part " + r.part + " of " + r.nparts : "", fmtH(r.est)].filter(Boolean).join(" · ")) + '</div><h3>' + esc(T.title) + '</h3></div>' +
-      '<span class="ex-state' + (done ? " done" : "") + '">' + (done ? "Done" : ticked + "/" + n) + '</span></header>';
+      ringState(done, ticked, n) + '</header>';
     h += '<div class="sets">' + stepRows(r.key, r.tid, dis);
     if (r.nparts) h += '<div class="set chk kg part-done' + (L.p ? " done" : "") + '"><span class="n">✓</span><span class="tg">Part ' + r.part + ' of ' + r.nparts + ' done for today</span>' +
       '<button class="tick" type="button" data-act="spart" data-key="' + esc(r.key) + '" data-tid="' + esc(r.tid) + '" aria-pressed="' + (L.p ? "true" : "false") + '" aria-label="Part ' + r.part + ' done for today"' + dis + '>' + ICON_CHECK + '</button></div>';
@@ -1349,9 +1454,9 @@ details.ncd > summary::-webkit-details-marker { display: none; }
     var p = ncFor(r.tid), L = sPeek(date, r.key) || {}, done = !!L.d, dis = state.loaded && !state.readOnly ? "" : " disabled", pass2 = /^LC2-/.test(r.tid);
     if (!p) return '';
     var n = stepsFor(r.tid).length, ticked = stepsTicked(r.tid);
-    var h = '<article class="ex' + (done ? " is-done" : "") + '"><header class="ex-h"><span class="plate yellow" aria-hidden="true"></span>' +
+    var h = '<article class="ex c-' + TRACK_PLATE.LeetCode + (done ? " is-done" : "") + '"><header class="ex-h"><span class="plate" aria-hidden="true"></span>' +
       '<div class="ex-t"><div class="part">' + esc(["NeetCode #" + p.num, p.diff, p.pattern, pass2 ? "Pass 2 · re-solve" : "Pass 1"].join(" · ")) + '</div><h3>' + esc(p.name) + '</h3></div>' +
-      '<span class="ex-state' + (done ? " done" : "") + '">' + (done ? "Done" : ticked + "/" + n) + '</span></header>';
+      ringState(done, ticked, n) + '</header>';
     h += '<div class="src"><a href="' + esc(p.link) + '" target="_blank" rel="noopener">Open on LeetCode ↗</a>' + (p.premium ? ' · LeetCode Premium: the free version is on neetcode.io' : '') + '</div>';
     h += '<div class="sets">' + stepRows(r.key, r.tid, dis) + '</div>';
     h += algBox(p, dis);
@@ -1402,10 +1507,9 @@ details.ncd > summary::-webkit-details-marker { display: none; }
       '<div class="stat"><b class="num">' + (act.est ? (Math.round(100 * act.real / act.est) / 100) + "×" : "–") + '</b><span>Actual ÷ planned</span></div></div>' +
       '<p class="small muted" style="margin:0">' + (act.est ? "Pace uses the rows where you logged actual hours. Above 1.2× for two weeks: tell Claude and the plan gets re-flowed." : "Log actual hours on each task this week: they show whether the plan's 1.5× pace holds.") + ' Study ends ' + esc(fmtDate(SP.end, { day: "numeric", month: "short", year: "numeric" })) + '.</p></section>';
     h += '<section class="panel"><div class="row"><h2>This week</h2><span class="small muted">' + fmtH(wk.done) + ' of ' + fmtH(wk.plan) + '</span></div><div class="progress' + (wk.plan && wk.done >= wk.plan ? " good" : "") + '"><span style="width:' + (wk.plan ? Math.round(100 * wk.done / wk.plan) : 0) + '%"></span></div></section>';
-    h += '<section class="panel"><h2>By track</h2><div class="goals">' + STRACKS.filter(function (k) { return tr[k]; }).map(function (k) {
-      var f = tr[k].plan ? tr[k].done / tr[k].plan : 0;
-      return '<div class="goal"><div class="eyebrow">' + esc(k) + '</div><div class="v num">' + Math.round(f * 100) + '<small>%</small></div><div class="progress' + (f >= 0.999 ? " good" : "") + '"><span style="width:' + Math.round(f * 100) + '%"></span></div><div class="small muted">' + fmtH(tr[k].done) + ' of ' + fmtH(tr[k].plan) + '</div></div>';
-    }).join("") + '</div></section>';
+    h += '<div class="blockh"><h2>Streaks by track</h2></div>' + DOT_KEY + '<div class="habits">' + STRACKS.filter(function (k) { return tr[k]; }).map(function (k) {
+      return streakCard(k, TRACK_PLATE[k] || "grey", studyDots(function (r) { return !isLC(r) && (STASK[r.tid] || {}).track === k; }), fmtH(tr[k].done) + " of " + fmtH(tr[k].plan));
+    }).join("") + streakCard("LeetCode", TRACK_PLATE.LeetCode, studyDots(isLC), lc1 + " solved · " + lc2 + " re-solved") + '</div>';
     var written = SNC.filter(function (p) { return (ncLog(p.num).a || "").trim(); }).length;
     h += '<section class="panel"><div class="row"><h2>NeetCode 150</h2><span class="small muted">' + lc2 + ' re-solves · ' + written + ' write-ups</span></div><div class="row small"><span><b class="num">' + solved + '</b> of 150 solved</span><button class="linkbtn" type="button" data-stab="lc">Open list</button></div>' +
       '<div class="progress' + (solved >= 150 ? " good" : "") + '"><span style="width:' + Math.round(100 * solved / 150) + '%"></span></div></section>';
@@ -1488,6 +1592,7 @@ details.ncd > summary::-webkit-details-marker { display: none; }
     var prog = dayProgress(state.date, pd), bar = panel && panel.querySelector(".progress > span");
     if (bar) { bar.style.width = Math.round(prog * 100) + "%"; bar.parentElement.classList.toggle("good", prog >= 0.99); }
     var lab = panel && panel.querySelector(".row.small span"); if (lab) lab.textContent = Math.round(prog * 100) + "% logged";
+    var ring = document.querySelector(".wkday.on .ring"); if (ring) ring.style.setProperty("--p", Math.round(prog * 100));
   }
 
   /* ------------------------------------------------------------ events */
@@ -1511,6 +1616,7 @@ details.ncd > summary::-webkit-details-marker { display: none; }
       case "sday-prev": state.sdate = addDays(state.sdate, -1); render(); break;
       case "sday-next": state.sdate = addDays(state.sdate, 1); render(); break;
       case "sday-today": state.sdate = pickStudyDate(); render(); break;
+      case "sday-pick": state.sdate = b.dataset.date; render(); break;
       case "sweek-prev": state.sweek = Math.max(1, (state.sweek || 1) - 1); render(); break;
       case "sweek-next": state.sweek = Math.min(SDAYS[SDAYS.length - 1].week, (state.sweek || 1) + 1); render(); break;
       case "sweek-now": state.sweek = null; render(); break;
@@ -1527,6 +1633,7 @@ details.ncd > summary::-webkit-details-marker { display: none; }
       case "day-prev": state.date = addDays(state.date, -1); state.dateTouched = true; render(); break;
       case "day-next": state.date = addDays(state.date, 1); state.dateTouched = true; render(); break;
       case "day-today": state.date = today(); state.dateTouched = true; render(); break;
+      case "day-pick": state.date = b.dataset.date; state.dateTouched = true; render(); break;
       case "open-day": state.date = b.dataset.date; state.dateTouched = true; go("today"); break;
       case "week-prev": state.weekView = Math.max(BASE.length ? 0 : 1, (state.weekView || 0) - 1); render(); break;
       case "week-next": state.weekView = Math.min(52, (state.weekView || 0) + 1); render(); break;

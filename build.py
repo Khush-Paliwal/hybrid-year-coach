@@ -20,7 +20,7 @@ head = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Hybrid Year Coach</title>
-<meta name="theme-color" content="#0f1317">
+<meta name="theme-color" content="#000000">
 <meta name="description" content="Daily workout, food and progress log for a 52-week hybrid training plan, plus a day-by-day study checklist.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
