@@ -13,7 +13,7 @@
 <body>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700;800&display=swap">
 <style>
 /* Layout: one-column phone log. Sticky header, week strip of progress rings, one card per task, fixed bottom tabs.
    Look (after TickOff): true black, soft rounded cards, one vivid colour per track or part (--c on the card),
@@ -35,11 +35,12 @@
   --warn: #ff9f0a;
   --warn-soft: rgba(255, 159, 10, 0.16);
   --bad: #ff5a5f;
-  --c-yellow: #ffd60a; --c-coral: #ff5a5f; --c-teal: #2fd6a8; --c-purple: #b26bff; --c-blue: #3ea6ff;
-  --c-orange: #ff9f43; --c-pink: #ff6fae; --c-green: #8bdc4b; --c-grey: #8e8e93;
-  --on-c: #000000;
-  --font-display: ui-rounded, "SF Pro Rounded", "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-body: ui-rounded, "SF Pro Rounded", "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* habit colours, matched by value to TickOff's palette */
+  --c-yellow: #ffdb0d; --c-coral: #fa4d56; --c-green: #00a878; --c-teal: #20b098; --c-blue: #488aff;
+  --c-olive: #90b627; --c-pink: #ed5b6c; --c-purple: #a66bff; --c-orange: #ff9f43; --c-grey: #8a8a8a;
+  --on-c: #ffffff;
+  --font-display: "Fira Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-body: "Fira Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --radius: 20px;
   color-scheme: dark;
 }
@@ -48,8 +49,7 @@
     --bg: #ffffff; --surface: #f2f2f5; --surface-2: #e5e5ea; --line: #dcdce1; --fg: #111113; --muted: #6c6c72; --faint: #a1a1a8;
     --accent: #ffc800; --accent-fg: #000000; --accent-soft: rgba(255, 200, 0, 0.2); --link: #a87a00;
     --good: #0fa87f; --good-soft: rgba(15, 168, 127, 0.14); --warn: #e08600; --warn-soft: rgba(224, 134, 0, 0.14); --bad: #e5484d;
-    --c-yellow: #f5c000; --c-coral: #f0484e; --c-teal: #12b48a; --c-purple: #9a4dff; --c-blue: #1e8ff0;
-    --c-orange: #f5891f; --c-pink: #ef5596; --c-green: #5cb82a; --c-grey: #8d8d93;
+    --c-grey: #9a9aa0;
     color-scheme: light;
   }
 }
@@ -57,12 +57,13 @@
   --bg: #ffffff; --surface: #f2f2f5; --surface-2: #e5e5ea; --line: #dcdce1; --fg: #111113; --muted: #6c6c72; --faint: #a1a1a8;
   --accent: #ffc800; --accent-fg: #000000; --accent-soft: rgba(255, 200, 0, 0.2); --link: #a87a00;
   --good: #0fa87f; --good-soft: rgba(15, 168, 127, 0.14); --warn: #e08600; --warn-soft: rgba(224, 134, 0, 0.14); --bad: #e5484d;
-  --c-yellow: #f5c000; --c-coral: #f0484e; --c-teal: #12b48a; --c-purple: #9a4dff; --c-blue: #1e8ff0;
-  --c-orange: #f5891f; --c-pink: #ef5596; --c-green: #5cb82a; --c-grey: #8d8d93;
+  --c-grey: #9a9aa0;
   color-scheme: light;
 }
-.c-yellow { --c: var(--c-yellow); } .c-coral { --c: var(--c-coral); } .c-teal { --c: var(--c-teal); } .c-purple { --c: var(--c-purple); }
-.c-blue { --c: var(--c-blue); } .c-orange { --c: var(--c-orange); } .c-pink { --c: var(--c-pink); } .c-green { --c: var(--c-green); } .c-grey { --c: var(--c-grey); }
+/* card colour; the check drawn on it is white, except black on yellow */
+.c-yellow { --c: var(--c-yellow); --on-c: #000000; } .c-coral { --c: var(--c-coral); } .c-green { --c: var(--c-green); } .c-teal { --c: var(--c-teal); }
+.c-blue { --c: var(--c-blue); } .c-olive { --c: var(--c-olive); } .c-pink { --c: var(--c-pink); } .c-purple { --c: var(--c-purple); }
+.c-orange { --c: var(--c-orange); } .c-grey { --c: var(--c-grey); }
 *, *::before, *::after { box-sizing: border-box; }
 body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.45; }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
@@ -171,10 +172,11 @@ main { display: flex; flex-direction: column; gap: 14px; padding-top: 14px; }
 .field { width: 100%; height: 42px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2); padding: 0 10px; font-variant-numeric: tabular-nums; font-size: 16px; text-align: center; }
 .field::placeholder { color: var(--faint); }
 .field.wide { text-align: left; }
-/* Ticks are circles: empty ring until done, then filled with the card's colour */
-.tick { width: 38px; height: 38px; justify-self: center; border-radius: 50%; border: 2px solid var(--line); background: transparent; display: grid; place-items: center; color: transparent; }
+/* Ticks are circles: a ring in the card's colour with a faint check until done, then filled with that colour */
+.tick { width: 38px; height: 38px; justify-self: center; border-radius: 50%; border: 2px solid color-mix(in srgb, var(--c, var(--muted)) 85%, transparent); background: transparent; display: grid; place-items: center; color: color-mix(in srgb, var(--c, var(--muted)) 70%, transparent); }
 .tick svg { width: 18px; height: 18px; }
 .tick[aria-pressed="true"] { background: var(--c, var(--good)); border-color: var(--c, var(--good)); color: var(--on-c); }
+.tick:disabled { opacity: 0.45; }
 .linkbtn { align-self: flex-start; border: 0; background: none; color: var(--link); font-weight: 700; padding: 4px 0; font-size: 14px; }
 .donebtn { height: 44px; border-radius: 999px; border: 0; background: var(--surface-2); font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 18px; }
 .donebtn svg { width: 18px; height: 18px; }
@@ -297,15 +299,25 @@ details.ncd > summary::-webkit-details-marker { display: none; }
 /* Streak cards (Progress): one per track, a column per week, a square per day */
 .habits { display: flex; flex-direction: column; gap: 10px; }
 .habit { background: var(--surface); border-radius: var(--radius); padding: 14px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-.habit-h { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 12px; align-items: center; }
-.habit-h b { display: block; font-weight: 800; overflow-wrap: anywhere; }
-.habit-h small { display: block; font-size: 12px; color: var(--muted); font-weight: 600; }
-.dots { display: grid; grid-template-rows: repeat(7, auto); grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 2px; }
-.dots i { aspect-ratio: 1; border-radius: 2px; background: color-mix(in srgb, var(--c) 9%, var(--surface-2)); }
-.dots i.x { background: transparent; }
-.dots i.m { background: color-mix(in srgb, var(--c) 30%, var(--surface-2)); }
-.dots i.h { background: color-mix(in srgb, var(--c) 62%, var(--surface-2)); }
-.dots i.d { background: var(--c); }
+.habit-h { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+.habit-h b { display: block; font-size: 17px; font-weight: 700; overflow-wrap: anywhere; }
+.habit-h small { display: block; font-size: 13px; color: var(--muted); font-weight: 500; }
+/* "done today" check on the left: filled once today's work for that track is done, else a ring */
+.today-chk { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; border: 2px solid var(--c); color: color-mix(in srgb, var(--c) 70%, transparent); }
+.today-chk.on { background: var(--c); color: var(--on-c); }
+.today-chk.off { border-color: var(--surface-2); color: var(--faint); }
+.today-chk svg { width: 22px; height: 22px; }
+/* streak on the right: count + flame in the track's colour, DAY(S) under it */
+.streak { text-align: center; font-weight: 800; font-size: 20px; line-height: 1; }
+.streak svg { width: 16px; height: 16px; color: var(--c); vertical-align: -1px; margin-left: 1px; }
+.streak small { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: var(--fg); margin-top: 4px; }
+.dots { display: grid; grid-template-rows: repeat(7, auto); grid-auto-flow: column; gap: 3px; align-items: center; }
+.dots span { font-size: 10px; font-weight: 600; color: var(--muted); text-align: center; line-height: 1; padding-right: 4px; }
+.dots i { aspect-ratio: 1; border-radius: 3px; box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--c) 30%, transparent); }
+.dots i.x { box-shadow: none; }
+.dots i.m { box-shadow: none; background: color-mix(in srgb, var(--c) 22%, var(--surface)); }
+.dots i.h { box-shadow: none; background: color-mix(in srgb, var(--c) 60%, var(--surface)); }
+.dots i.d { box-shadow: none; background: var(--c); }
 .dots i.t { box-shadow: 0 0 0 1.5px var(--fg); }
 .dotkey { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; color: var(--muted); font-weight: 600; }
 .dotkey i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
@@ -385,7 +397,7 @@ details.ncd > summary::-webkit-details-marker { display: none; }
   var STID_ROWS = {}; // task id -> every [date, row key] it occupies (split tasks have several)
   SDAYS.forEach(function (sd, ix) { sd.rows.forEach(function (r) { (STID_ROWS[r.tid] = STID_ROWS[r.tid] || []).push([ix, r.key]); }); });
   var STRACKS = ["Strang 18.06", "MIT 18.02", "Stat 110", "Wasserman", "Boyd", "Gate check", "ISLP", "ESL", "Tsay", "Buffer", "Review"];
-  var TRACK_PLATE = { "Strang 18.06": "yellow", "MIT 18.02": "teal", "Stat 110": "coral", Wasserman: "orange", Boyd: "purple", "Gate check": "blue", ISLP: "green", ESL: "blue", Tsay: "pink", LeetCode: "purple", Buffer: "grey", Review: "grey" };
+  var TRACK_PLATE = { "Strang 18.06": "yellow", "MIT 18.02": "teal", "Stat 110": "coral", Wasserman: "orange", Boyd: "purple", "Gate check": "blue", ISLP: "olive", ESL: "blue", Tsay: "pink", LeetCode: "purple", Buffer: "grey", Review: "grey" };
 
   /* Exercise demos: start/end photos from free-exercise-db (public domain), flipped like a GIF. */
   var DEMO_RULES = JSON.parse(document.getElementById("demo-data").textContent).map(function (r) { return [new RegExp(r[0], "i"), r[1]]; });
@@ -1402,26 +1414,30 @@ details.ncd > summary::-webkit-details-marker { display: none; }
     }
     return n;
   }
-  function dotGrid(days) { // one column per week (Monday on top): the last 12 weeks and the next 13
+  function dotGrid(days) { // one column per week (Monday on top): the last 8 weeks and the next 10
     if (!days.length) return "";
     var t = today(), first = days[0].date, lead = (parseYmd(first).getDay() + 6) % 7, cells = [];
     for (var k = 0; k < lead; k++) cells.push(null);
     cells = cells.concat(days);
     var weeks = Math.ceil(cells.length / 7), tw = Math.floor((dayNum(t) - dayNum(first) + lead) / 7);
-    var w0 = Math.max(0, Math.min(tw - 12, weeks - 26)), w1 = Math.min(weeks, w0 + 26);
-    var h = '<div class="dots" style="grid-template-columns:repeat(' + (w1 - w0) + ',minmax(0,1fr))" aria-hidden="true">';
+    var w0 = Math.max(0, Math.min(tw - 8, weeks - 18)), w1 = Math.min(weeks, w0 + 18);
+    var h = '<div class="dots" style="grid-template-columns:auto repeat(' + (w1 - w0) + ',minmax(0,1fr))" aria-hidden="true">';
+    ["M", "T", "W", "T", "F", "S", "S"].forEach(function (l) { h += '<span>' + l + '</span>'; });
     for (var i = w0 * 7; i < w1 * 7; i++) { var c = cells[i]; h += '<i class="' + (c ? c.s + (c.date === t ? " t" : "") : "x") + '"></i>'; }
     return h + '</div>';
   }
+  var ICON_FLAME = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.6 2.2c.6 3.1 2.9 4.9 4.4 7.1 1.1 1.6 1.7 3.3 1.7 5.1A6.7 6.7 0 0 1 12 21a6.7 6.7 0 0 1-6.7-6.6c0-2.5 1.2-4.4 2.8-5.9.1 1.9.9 3.2 2.3 3.9-.5-3.9.7-7.2 2.2-10.2z"/></svg>';
   function streakCard(name, color, days, sub) {
-    var planned = days.filter(function (c) { return c.s !== "x"; }), done = planned.filter(function (c) { return c.s === "d"; }).length;
-    var p = planned.length ? Math.round(100 * done / planned.length) : 0, st = streakOf(days);
-    return '<div class="habit c-' + color + '"><div class="habit-h"><span class="plate" aria-hidden="true"></span><div><b>' + esc(name) + '</b>' +
-      '<small>Streak: ' + st + (st === 1 ? " day" : " days") + (sub ? " · " + esc(sub) : "") + '</small></div>' +
-      '<span class="ex-state" style="--p:' + p + '" aria-label="' + p + '% of planned days done">' + p + '%</span></div>' + dotGrid(days) + '</div>';
+    var t = today(), planned = days.filter(function (c) { return c.s !== "x"; });
+    var due = planned.filter(function (c) { return c.date < t || (c.date === t && c.s === "d"); }), done = due.filter(function (c) { return c.s === "d"; }).length;
+    var st = streakOf(days), td = days.filter(function (c) { return c.date === t; })[0], chk = !td || td.s === "x" ? "off" : td.s === "d" ? "on" : "";
+    var when = due.length ? Math.round(100 * done / due.length) + "% done so far" : planned.length && planned[0].date > t ? "Starts " + fmtDate(planned[0].date, { day: "numeric", month: "short" }) : "Due today";
+    return '<div class="habit c-' + color + '"><div class="habit-h"><span class="today-chk ' + chk + '" aria-label="' + (chk === "on" ? "Done today" : chk ? "Nothing planned today" : "Not done today") + '">' + ICON_CHECK + '</span>' +
+      '<div><b>' + esc(name) + '</b><small>' + esc(when) + (sub ? " · " + esc(sub) : "") + '</small></div>' +
+      '<div class="streak" aria-label="Streak ' + st + (st === 1 ? " day" : " days") + '">' + st + ICON_FLAME + '<small>' + (st === 1 ? "DAY" : "DAYS") + '</small></div></div>' + dotGrid(days) + '</div>';
   }
-  var DOT_KEY = '<div class="dotkey c-yellow"><span><i style="background:var(--c)"></i>Done</span><span><i style="background:color-mix(in srgb, var(--c) 62%, var(--surface-2))"></i>Part done</span>' +
-    '<span><i style="background:color-mix(in srgb, var(--c) 30%, var(--surface-2))"></i>Missed</span><span><i style="background:color-mix(in srgb, var(--c) 9%, var(--surface-2))"></i>To come</span></div>';
+  var DOT_KEY = '<div class="dotkey c-yellow"><span><i style="background:var(--c)"></i>Done</span><span><i style="background:color-mix(in srgb, var(--c) 60%, var(--surface))"></i>Part done</span>' +
+    '<span><i style="background:color-mix(in srgb, var(--c) 22%, var(--surface))"></i>Missed</span><span><i style="box-shadow:inset 0 0 0 1.5px color-mix(in srgb, var(--c) 30%, transparent)"></i>To come</span></div>';
   function studyPct(d) { var sd = sDay(d); if (!sd || !sd.rows.some(function (r) { return !isLC(r); })) return null; var hr = sHours(d, sd); return hr.plan ? hr.done / hr.plan : 0; }
   function exPct(d) { var pd = planDay(d); return pd ? dayProgress(d, pd) : null; }
   function ringState(done, ticked, n) { // card state: a ring that fills with the ticks, a solid check once done
