@@ -13,10 +13,10 @@
   --fg: #ffffff;
   --muted: #8e8e93;
   --faint: #58585e;
-  --accent: #ffd60a;
+  --accent: #ffdb0d;               /* the Me tab's Look panel can override --accent and --accent-fg on <html> */
   --accent-fg: #000000;
-  --accent-soft: rgba(255, 214, 10, 0.16);
-  --link: #ffd60a;
+  --accent-soft: color-mix(in srgb, var(--accent) 16%, transparent);
+  --link: var(--accent);
   --good: #2fd6a8;
   --good-soft: rgba(47, 214, 168, 0.16);
   --warn: #ff9f0a;
@@ -34,7 +34,7 @@
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
     --bg: #ffffff; --surface: #f2f2f5; --surface-2: #e5e5ea; --line: #dcdce1; --fg: #111113; --muted: #6c6c72; --faint: #a1a1a8;
-    --accent: #ffc800; --accent-fg: #000000; --accent-soft: rgba(255, 200, 0, 0.2); --link: #a87a00;
+    --accent: #ffc800; --accent-fg: #000000; --accent-soft: color-mix(in srgb, var(--accent) 22%, transparent); --link: color-mix(in srgb, var(--accent) 62%, #000);
     --good: #0fa87f; --good-soft: rgba(15, 168, 127, 0.14); --warn: #e08600; --warn-soft: rgba(224, 134, 0, 0.14); --bad: #e5484d;
     --c-grey: #9a9aa0;
     color-scheme: light;
@@ -42,7 +42,7 @@
 }
 :root[data-theme="light"] {
   --bg: #ffffff; --surface: #f2f2f5; --surface-2: #e5e5ea; --line: #dcdce1; --fg: #111113; --muted: #6c6c72; --faint: #a1a1a8;
-  --accent: #ffc800; --accent-fg: #000000; --accent-soft: rgba(255, 200, 0, 0.2); --link: #a87a00;
+  --accent: #ffc800; --accent-fg: #000000; --accent-soft: color-mix(in srgb, var(--accent) 22%, transparent); --link: color-mix(in srgb, var(--accent) 62%, #000);
   --good: #0fa87f; --good-soft: rgba(15, 168, 127, 0.14); --warn: #e08600; --warn-soft: rgba(224, 134, 0, 0.14); --bad: #e5484d;
   --c-grey: #9a9aa0;
   color-scheme: light;
@@ -84,14 +84,16 @@ main { display: flex; flex-direction: column; gap: 14px; padding-top: 14px; }
 /* Day header + week strip: each day is a ring that fills with the share of that day's plan you ticked */
 .dayhead { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; }
 .dayhead h1 { font-family: var(--font-display); font-size: 28px; line-height: 1.1; font-weight: 800; }
+.dayhead h1 .dim { color: var(--muted); font-weight: 700; }
 .dayhead .nav { display: flex; gap: 6px; flex: none; }
 .dayhead .iconbtn { width: 38px; height: 38px; }
 .wkstrip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
 .wkday { border: 0; background: none; padding: 2px 0; display: flex; flex-direction: column; align-items: center; gap: 5px; color: var(--muted); font-size: 11px; font-weight: 700; }
 .wkday:disabled { opacity: 0.35; cursor: default; }
-.wkday.today .dn { color: var(--link); }
-.ring { --p: 0; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: var(--fg); font-size: 14px; font-weight: 800;
-  background: radial-gradient(closest-side, var(--bg) 80%, transparent 81% 100%), conic-gradient(var(--accent) calc(var(--p) * 1%), var(--surface-2) 0); }
+.wkday { font-size: 13px; font-weight: 600; }
+.wkday.today .dn { color: var(--fg); font-weight: 800; }
+.ring { --p: 0; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; color: var(--fg); font-size: 15px; font-weight: 700;
+  background: radial-gradient(closest-side, var(--bg) 74%, transparent 75% 100%), conic-gradient(var(--accent) calc(var(--p) * 1%), var(--surface-2) 0); }
 .ring b { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; }
 .wkday.on .ring b { background: var(--fg); color: var(--bg); }
 
@@ -116,16 +118,25 @@ main { display: flex; flex-direction: column; gap: 14px; padding-top: 14px; }
 .items { display: flex; flex-direction: column; gap: 10px; }
 .ex { background: var(--surface); border-radius: var(--radius); padding: 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .ex.is-done { box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--c, var(--good)) 60%, transparent); }
-.ex-h { display: grid; grid-template-columns: 36px 1fr auto; gap: 12px; align-items: center; }
-/* Card icon: a soft tile in the card's colour (the track or part), with a solid dot */
-.plate { width: 36px; height: 36px; border-radius: 12px; background: color-mix(in srgb, var(--c, var(--c-grey)) 22%, var(--surface-2)); display: grid; place-items: center; }
+.ex-h { display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; }
+/* Card icon: a soft circle in the card's colour (the track or part) holding its symbol (data-g) or icon, else a dot */
+.plate { width: 40px; height: 40px; border-radius: 50%; background: color-mix(in srgb, var(--c, var(--c-grey)) 20%, var(--surface)); display: grid; place-items: center;
+  color: var(--c, var(--c-grey)); font-weight: 800; font-size: 16px; line-height: 1; letter-spacing: -0.02em; }
 .plate::after { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--c, var(--c-grey)); }
+.plate[data-g]::after { content: attr(data-g); width: auto; height: auto; background: none; }
+.plate.ico::after { display: none; }
+.plate svg { width: 20px; height: 20px; }
+/* light mode: darken symbols drawn in a card colour so yellow and teal stay readable on white */
+:root[data-theme="light"] .plate, :root[data-theme="light"] .set.done .n { color: color-mix(in srgb, var(--c, var(--c-grey)) 68%, #000); }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .plate, :root:not([data-theme="dark"]) .set.done .n { color: color-mix(in srgb, var(--c, var(--c-grey)) 68%, #000); }
+}
 .ex-t { min-width: 0; }
 .part { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
 .ex-t h3 { font-size: 16px; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
 /* Card state: a ring that fills as you tick (--p = percent), a solid check once done */
-.ex-state { --p: 0; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 800; color: var(--muted); white-space: nowrap;
-  background: radial-gradient(closest-side, var(--surface) 78%, transparent 79% 100%), conic-gradient(var(--c, var(--accent)) calc(var(--p) * 1%), var(--surface-2) 0); }
+.ex-state { --p: 0; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 800; color: var(--fg); white-space: nowrap;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--c, var(--accent)) 16%, var(--surface)) 78%, transparent 79% 100%), conic-gradient(var(--c, var(--accent)) calc(var(--p) * 1%), var(--surface-2) 0); }
 .ex-state.done { background: var(--c, var(--good)); color: var(--on-c); }
 .ex-state svg { width: 20px; height: 20px; }
 .rx { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; }
@@ -306,6 +317,28 @@ details.ncd > summary::-webkit-details-marker { display: none; }
 .dots i.h { box-shadow: none; background: color-mix(in srgb, var(--c) 60%, var(--surface)); }
 .dots i.d { box-shadow: none; background: var(--c); }
 .dots i.t { box-shadow: 0 0 0 1.5px var(--fg); }
+/* Look (Me): appearance tiles, accent swatches, switches */
+.looktiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.looktile { border: 1.5px solid transparent; border-radius: 16px; background: var(--surface-2); padding: 14px 6px; display: flex; flex-direction: column; align-items: center; gap: 6px; font-weight: 700; color: var(--muted); }
+.looktile svg { width: 24px; height: 24px; }
+.looktile[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--fg); }
+.swatches { display: flex; flex-wrap: wrap; gap: 10px; }
+.swatch { width: 36px; height: 36px; border-radius: 50%; border: 0; display: grid; place-items: center; }
+.swatch svg { width: 18px; height: 18px; opacity: 0; }
+.swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--fg); }
+.swatch[aria-pressed="true"] svg { opacity: 1; }
+.switchrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.switch { width: 52px; height: 30px; border-radius: 999px; border: 0; background: var(--surface-2); position: relative; flex: none; }
+.switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: var(--muted); transition: transform 0.2s ease; }
+.switch[aria-pressed="true"] { background: var(--accent); }
+.switch[aria-pressed="true"]::after { transform: translateX(22px); background: var(--accent-fg); }
+/* Habit Score gauge (Progress) */
+.gaugesvg { width: 100%; max-width: 280px; margin: 0 auto; display: block; }
+.gaugepill { align-self: center; background: var(--accent-soft); font-weight: 700; padding: 8px 16px; border-radius: 999px; font-variant-numeric: tabular-nums; }
+/* Confetti burst when a card is finished */
+.confetti { position: fixed; z-index: 20; width: 0; height: 0; pointer-events: none; }
+.confetti i { position: absolute; width: 7px; height: 11px; border-radius: 2px; animation: confetti 1s cubic-bezier(0.2, 0.7, 0.4, 1) forwards; }
+@keyframes confetti { from { transform: translate(0, 0) rotate(0deg); opacity: 1; } to { transform: translate(var(--dx), calc(var(--dy) + 60px)) rotate(var(--r)); opacity: 0; } }
 .dotkey { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; color: var(--muted); font-weight: 600; }
 .dotkey i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
@@ -385,6 +418,7 @@ details.ncd > summary::-webkit-details-marker { display: none; }
   SDAYS.forEach(function (sd, ix) { sd.rows.forEach(function (r) { (STID_ROWS[r.tid] = STID_ROWS[r.tid] || []).push([ix, r.key]); }); });
   var STRACKS = ["Strang 18.06", "MIT 18.02", "Stat 110", "Wasserman", "Boyd", "Gate check", "ISLP", "ESL", "Tsay", "Buffer", "Review"];
   var TRACK_PLATE = { "Strang 18.06": "yellow", "MIT 18.02": "teal", "Stat 110": "coral", Wasserman: "orange", Boyd: "purple", "Gate check": "blue", ISLP: "olive", ESL: "blue", Tsay: "pink", LeetCode: "purple", Buffer: "grey", Review: "grey" };
+  var TRACK_GLYPH = { "Strang 18.06": "Ax", "MIT 18.02": "∫", "Stat 110": "P", Wasserman: "Σ", Boyd: "∇", "Gate check": "✓", ISLP: "ŷ", ESL: "β", Tsay: "Δt", LeetCode: "</>", Buffer: "+", Review: "↺" };
 
   /* Exercise demos: start/end photos from free-exercise-db (public domain), flipped like a GIF. */
   var DEMO_RULES = JSON.parse(document.getElementById("demo-data").textContent).map(function (r) { return [new RegExp(r[0], "i"), r[1]]; });
@@ -553,6 +587,18 @@ details.ncd > summary::-webkit-details-marker { display: none; }
     if (part === "Daily") return "pink";
     if (part === "Check-in") return "orange";
     return "grey";
+  }
+  function partIcon(part) { // icon in the card's circle, drawn in its colour
+    var p = { Strength: '<path d="M6.5 6.5v11M17.5 6.5v11M3 9.5v5M21 9.5v5M6.5 12h11"/>', Test: '<path d="M5 21V4h11l-2 4 2 4H5"/>',
+      Run: '<path d="M13 3 5 13.5h6L10 21l8-10.5h-6z"/>', Skill: '<path d="m12 3.5 2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/>',
+      Accessory: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/>', "Warm-up": '<path d="M12.6 3c.5 2.8 2.7 4.4 4 6.4a6.3 6.3 0 1 1-10.4.6c.3 1.6 1 2.6 2.2 3.2-.4-3.5.8-6.6 4.2-10.2z"/>',
+      "Cool-down": '<path d="M19.5 14.5A7.5 7.5 0 0 1 9.5 4.5a7.5 7.5 0 1 0 10 10z"/>', Daily: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+      "Check-in": '<path d="M3 12h4l2-5 4 10 2-5h6"/>' };
+    var d = p[part] || p[{ Core: "Accessory", Optional: "Accessory", Mobility: "Cool-down", Recovery: "Cool-down" }[part]];
+    return d ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + '</svg>' : "";
+  }
+  function plateHtml(glyph, icon) {
+    return '<span class="plate' + (icon ? " ico" : "") + '"' + (glyph ? ' data-g="' + esc(glyph) + '"' : "") + ' aria-hidden="true">' + (icon || "") + '</span>';
   }
   function wantsWeight(it, r) { return r.kind === "bar" || /RPE/.test(String(r.load || "")) || /^Weighted/i.test(it.ex); }
   function kegelCount(it) { var m = String(it.notes || "").match(/(\d) times today/); return m ? Number(m[1]) : 3; }
@@ -910,7 +956,7 @@ details.ncd > summary::-webkit-details-marker { display: none; }
     else if (t === "list") stateTxt = (L.c || []).filter(Boolean).length + "/" + it.subs.length;
     else if (t === "kegel") stateTxt = (L.k || []).filter(Boolean).length + "/" + kegelCount(it);
     var h = '<article class="ex c-' + plate + (done >= 0.99 ? " is-done" : "") + '" data-card="' + i + '">' +
-      '<header class="ex-h"><span class="plate" aria-hidden="true"></span><div class="ex-t"><div class="part">' + esc(it.part) + '</div><h3>' + esc(it.ex) + '</h3></div>' +
+      '<header class="ex-h">' + plateHtml("", partIcon(it.part)) + '<div class="ex-t"><div class="part">' + esc(it.part) + '</div><h3>' + esc(it.ex) + '</h3></div>' +
       '<span class="ex-state' + (done >= 0.99 ? " done" : "") + '" style="--p:' + Math.round(done * 100) + '"' + (done >= 0.99 ? ' aria-label="Done"' : '') + '>' + (done >= 0.99 ? ICON_CHECK : esc(stateTxt)) + '</span></header>';
     if (t !== "run" && t !== "tt" && t !== "kegel" && (t !== "list" || it.part === "Daily")) h += howTo(it.ex);
 
@@ -1133,6 +1179,8 @@ details.ncd > summary::-webkit-details-marker { display: none; }
       var fj = gj.status === "skipped" ? 0 : dayProgress(dj, pj);
       tDays.push({ date: dj, s: gj.status === "done" || fj >= 0.99 ? "d" : fj > 0 ? "h" : dj < tNow ? "m" : "" });
     }
+    var tDue = tDays.filter(function (c) { return c.s !== "x" && (c.date < tNow || (c.date === tNow && c.s === "d")); }), tDone = tDue.filter(function (c) { return c.s === "d"; }).length;
+    h = scoreGauge("Training score", tDue.length ? 100 * tDone / tDue.length : 0, tDue.length ? "Share of the training days so far that you finished" : "Starts counting after your first training day") + h;
     h += DOT_KEY.replace("c-yellow", "c-coral") + '<div class="habits">' + streakCard("Training days", "coral", tDays, total + " sessions so far") + '</div>';
 
     var k5 = latestTest("k5"), k5Start = est("k5"), k5Goal = Number(state.settings.goal5k);
@@ -1208,7 +1256,7 @@ details.ncd > summary::-webkit-details-marker { display: none; }
   function renderMe() {
     var s = state.settings, dis = state.loaded && !state.readOnly ? "" : " disabled";
     var cur = planDay(today()), w = cur ? cur.week : 1, P = paces(w);
-    var h = renderSyncPanel();
+    var h = renderSyncPanel() + renderLook();
     h += '<section class="panel"><h2>Test results</h2><p class="small muted" style="margin:0">Enter results after each test week. Weights, rep targets and paces for the next block update automatically. 5K as mm:ss.</p><div class="tablewrap"><table><thead><tr><th>Metric</th><th>Wk 0 / start</th>' + TEST_COLS.map(function (c) { return "<th>Wk " + c[1] + "</th>"; }).join("") + '</tr></thead><tbody>' +
       METRICS.map(function (m) {
         var row = '<tr><td>' + esc(m.label) + '</td>';
@@ -1238,13 +1286,68 @@ details.ncd > summary::-webkit-details-marker { display: none; }
       guide("Missed sessions", ["Miss one: skip it and carry on", "Miss a week: repeat that week", "Miss 2+ weeks: one deload week, then repeat the last full week"]) +
       guide("Week 24 checkpoint", ["5K ≤ 23:30 → aim for sub-21 (change Goal 5K above)", "Squat e1RM ≥ 245 → 315 stays possible in ~18 months", "Bench e1RM ≥ 195 → on track for 100 kg", "Pull-ups ≥ 10, dips ≥ 13 → on track", "Freestanding hold ≥ 10 s → freestanding HSPU stays a live stretch goal"]) +
       guide("Handstand push-up ladder", ["L1 wk 1-6: pike push-ups, chest-to-wall holds", "L2 wk 7-12: elevated pike, 30-45 s holds", "L3 wk 13-20: wall negatives, shoulder taps", "L4 wk 21-30: partial reps to a pad stack, toe/heel pulls", "L5 wk 31-40: full wall reps, 10-20 s free holds", "L6 wk 41-48: 2-4 wall reps, freestanding negatives", "L7 wk 49-52: freestanding attempts"]) +
-      guide("Muscle-up ladder", ["Stage 1-2: hangs, scap pulls, negatives, swings", "Stage 3: explosive pull-ups, straight-bar dips", "Stage 4: chest-to-bar, band-assisted (needs 8 pull-ups + 5 bar dips)", "Stage 5: unassisted attempts (needs ~10 pull-ups + 3 chest-to-bar)", "Stage 6-7: EMOM singles, then clean reps"]) +
+      guide("Muscle-up ladder", ["Stage 1-2: hangs, scap pulls, negatives, swings", "Stage 3: explosive pull-ups, straight-bar dips", "Stage 4: chest-to-bar, jumping muscle-ups from a box (needs 8 pull-ups + 5 bar dips)", "Stage 5: unassisted attempts (needs ~10 pull-ups + 3 chest-to-bar)", "Stage 6-7: EMOM singles, then clean reps"]) +
       guide("Kegels: how", ["Squeeze as if stopping urine and holding in gas, without clenching glutes, thighs or abs. Keep breathing", "Relax fully for as long as you held", "Reverse Kegel: gently let go and lengthen", "Don’t practise by actually stopping urine. Pain or symptoms: see a pelvic-floor physio"]) +
       '<p class="small muted" style="margin:8px 0 0">Exercise photos: free-exercise-db (public domain). “Watch how” links open a YouTube search (reverse Kegels open a pelvic-floor physio’s video).</p>' +
       '</section>';
     return h;
   }
   function guide(title, items) { return '<details class="guide"><summary>' + esc(title) + '</summary><ul>' + items.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + '</ul></details>'; }
+
+  /* Look (Me tab, both sections): appearance, accent colour and confetti, kept per phone */
+  var ACCENTS = ["#ffdb0d", "#ff9f0a", "#fa4d56", "#ed5b6c", "#a66bff", "#488aff", "#20b098", "#00a878", "#90b627"];
+  function lum(hex) { // relative luminance, to pick black or white text on a colour
+    var n = parseInt(hex.slice(1), 16);
+    var c = [n >> 16, (n >> 8) & 255, n & 255].map(function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+  }
+  function inkOn(hex) { return lum(hex) > 0.179 ? "#000000" : "#ffffff"; }
+  function applyLook() {
+    var r = document.documentElement, th = prefGet("theme"), ac = prefGet("accent");
+    if (th === "light" || th === "dark") r.setAttribute("data-theme", th); else r.removeAttribute("data-theme");
+    if (ac) { r.style.setProperty("--accent", ac); r.style.setProperty("--accent-fg", inkOn(ac)); }
+    else { r.style.removeProperty("--accent"); r.style.removeProperty("--accent-fg"); }
+    var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute("content", getComputedStyle(r).getPropertyValue("--bg").trim() || "#000000");
+  }
+  var ICON_SYSTEM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>';
+  var ICON_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+  var ICON_MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>';
+  function renderLook() {
+    var th = prefGet("theme") || "system", ac = prefGet("accent") || ACCENTS[0], conf = prefGet("confetti") !== "off";
+    return '<section class="panel"><h2>Look</h2><div class="eyebrow">Appearance</div><div class="looktiles">' +
+      [["system", "System", ICON_SYSTEM], ["light", "Light", ICON_SUN], ["dark", "Dark", ICON_MOON]].map(function (t) {
+        return '<button class="looktile" type="button" data-act="look-theme" data-v="' + t[0] + '" aria-pressed="' + (th === t[0]) + '">' + t[2] + esc(t[1]) + '</button>';
+      }).join("") + '</div><div class="eyebrow">Accent colour</div><div class="swatches">' + ACCENTS.map(function (c) {
+        return '<button class="swatch" type="button" data-act="look-accent" data-v="' + c + '" style="background:' + c + ';color:' + inkOn(c) + '" aria-pressed="' + (ac === c) + '" aria-label="Accent colour ' + c + '">' + ICON_CHECK + '</button>';
+      }).join("") + '</div><div class="switchrow"><span><b>Confetti</b><span class="small muted" style="display:block">When you finish a card</span></span>' +
+      '<button class="switch" type="button" data-act="look-confetti" aria-pressed="' + conf + '" aria-label="Confetti when you finish a card"></button></div></section>';
+  }
+
+  /* Habit Score: a gauge of how much of the plan so far is done (red under 33, yellow under 67, green above) */
+  function scoreGauge(title, score, note) {
+    var s = Math.max(0, Math.min(100, score)), zone = s < 33 ? 0 : s < 67 ? 1 : 2;
+    function pt(v, r) { var a = Math.PI * (1 - v / 100); return [(100 + r * Math.cos(a)).toFixed(1), (100 - r * Math.sin(a)).toFixed(1)]; }
+    function arc(a, b, col, z) { var p = pt(a, 78), q = pt(b, 78); return '<path d="M' + p.join(" ") + ' A78 78 0 0 1 ' + q.join(" ") + '" stroke="' + col + '" stroke-width="16" stroke-linecap="round" fill="none" opacity="' + (z === zone ? 1 : 0.32) + '"/>'; }
+    var n = pt(s, 60);
+    return '<section class="panel"><h2 style="text-align:center">' + esc(title) + '</h2><svg class="gaugesvg" viewBox="0 0 200 116" role="img" aria-label="' + esc(title) + ': ' + s.toFixed(1) + ' out of 100">' +
+      arc(4, 29, "var(--c-coral)", 0) + arc(38, 62, "var(--c-yellow)", 1) + arc(71, 96, "var(--c-green)", 2) +
+      '<line x1="100" y1="100" x2="' + n[0] + '" y2="' + n[1] + '" stroke="var(--muted)" stroke-width="7" stroke-linecap="round"/><circle cx="100" cy="100" r="7" fill="var(--muted)"/></svg>' +
+      '<div class="gaugepill">' + s.toFixed(1) + ' out of 100</div>' + (note ? '<p class="small muted" style="margin:0;text-align:center">' + esc(note) + '</p>' : '') + '</section>';
+  }
+
+  /* Confetti burst from a tick when its card is finished (Look > Confetti turns it off) */
+  function confetti(rect, color) {
+    if (!rect || prefGet("confetti") === "off" || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) return;
+    var cols = [color || "var(--accent)", "var(--c-yellow)", "var(--c-coral)", "var(--c-teal)", "var(--c-blue)", "var(--c-purple)"], box = document.createElement("div");
+    box.className = "confetti"; box.style.left = (rect.left + rect.width / 2) + "px"; box.style.top = (rect.top + rect.height / 2) + "px";
+    for (var k = 0; k < 28; k++) {
+      var p = document.createElement("i"), a = Math.random() * Math.PI * 2, d = 50 + Math.random() * 90;
+      p.style.setProperty("--dx", Math.round(Math.cos(a) * d) + "px"); p.style.setProperty("--dy", Math.round(Math.sin(a) * d - 40) + "px");
+      p.style.setProperty("--r", Math.round(Math.random() * 540 - 270) + "deg"); p.style.background = cols[k % cols.length];
+      box.appendChild(p);
+    }
+    document.body.appendChild(box); setTimeout(function () { box.remove(); }, 1100);
+  }
 
   /* ------------------------------------------------------------ study plan */
   var ICON_BOOK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H20v16H5.5A1.5 1.5 0 0 0 4 20.5zM4 20.5A1.5 1.5 0 0 0 5.5 22H20M8 7.5h8M8 11h6"/></svg>';
@@ -1366,9 +1469,10 @@ details.ncd > summary::-webkit-details-marker { display: none; }
   }
   /* Day header (big date, small prev/next) and the week strip: Mon-Sun of the shown day, each a ring that fills with
      that day's progress. pctFor(date) gives 0..1, or null when nothing is planned (the day is then disabled). */
-  function dayHeader(date, eyebrow, act) {
-    var title = date === today() ? "Today, " + fmtDate(date, { day: "numeric", month: "short" }) : fmtDate(date, { weekday: "long", day: "numeric", month: "short" });
-    return '<section class="dayhead"><div class="daytitle" style="text-align:left"><div class="eyebrow">' + esc(eyebrow) + '</div><h1>' + esc(title) + '</h1></div>' +
+  function ordinal(n) { return n + ((n % 100 >= 11 && n % 100 <= 13) ? "th" : ["th", "st", "nd", "rd"][n % 10] || "th"); }
+  function dayHeader(date, eyebrow, act) { // "Today, 21st Nov" (date in grey), or "Saturday, 21st Nov"
+    var lead = date === today() ? "Today," : fmtDate(date, { weekday: "long" }) + ",", rest = ordinal(parseYmd(date).getDate()) + " " + fmtDate(date, { month: "short" });
+    return '<section class="dayhead"><div class="daytitle" style="text-align:left"><div class="eyebrow">' + esc(eyebrow) + '</div><h1>' + esc(lead) + ' <span class="dim">' + esc(rest) + '</span></h1></div>' +
       '<div class="nav"><button class="iconbtn" type="button" data-act="' + act + '-prev" aria-label="Previous day">' + ICON_L + '</button>' +
       '<button class="iconbtn" type="button" data-act="' + act + '-next" aria-label="Next day">' + ICON_R + '</button></div></section>';
   }
@@ -1434,7 +1538,7 @@ details.ncd > summary::-webkit-details-marker { display: none; }
     if (isLC(r)) return renderLeetCode(date, r);
     var T = STASK[r.tid] || { track: "", title: r.tid, steps: [], tip: "", src: "" }, L = sPeek(date, r.key) || {}, done = !!L.d, dis = state.loaded && !state.readOnly ? "" : " disabled";
     var n = stepsFor(r.tid).length, ticked = stepsTicked(r.tid);
-    var h = '<article class="ex c-' + (TRACK_PLATE[T.track] || "grey") + (done ? " is-done" : "") + '"><header class="ex-h"><span class="plate" aria-hidden="true"></span>' +
+    var h = '<article class="ex c-' + (TRACK_PLATE[T.track] || "grey") + (done ? " is-done" : "") + '"><header class="ex-h">' + plateHtml(TRACK_GLYPH[T.track]) +
       '<div class="ex-t"><div class="part">' + esc([T.track, r.tid, r.nparts ? "part " + r.part + " of " + r.nparts : "", fmtH(r.est)].filter(Boolean).join(" · ")) + '</div><h3>' + esc(T.title) + '</h3></div>' +
       ringState(done, ticked, n) + '</header>';
     h += '<div class="sets">' + stepRows(r.key, r.tid, dis);
@@ -1457,7 +1561,7 @@ details.ncd > summary::-webkit-details-marker { display: none; }
     var p = ncFor(r.tid), L = sPeek(date, r.key) || {}, done = !!L.d, dis = state.loaded && !state.readOnly ? "" : " disabled", pass2 = /^LC2-/.test(r.tid);
     if (!p) return '';
     var n = stepsFor(r.tid).length, ticked = stepsTicked(r.tid);
-    var h = '<article class="ex c-' + TRACK_PLATE.LeetCode + (done ? " is-done" : "") + '"><header class="ex-h"><span class="plate" aria-hidden="true"></span>' +
+    var h = '<article class="ex c-' + TRACK_PLATE.LeetCode + (done ? " is-done" : "") + '"><header class="ex-h">' + plateHtml(TRACK_GLYPH.LeetCode) +
       '<div class="ex-t"><div class="part">' + esc(["NeetCode #" + p.num, p.diff, p.pattern, pass2 ? "Pass 2 · re-solve" : "Pass 1"].join(" · ")) + '</div><h3>' + esc(p.name) + '</h3></div>' +
       ringState(done, ticked, n) + '</header>';
     h += '<div class="src"><a href="' + esc(p.link) + '" target="_blank" rel="noopener">Open on LeetCode ↗</a>' + (p.premium ? ' · LeetCode Premium: the free version is on neetcode.io' : '') + '</div>';
@@ -1492,7 +1596,7 @@ details.ncd > summary::-webkit-details-marker { display: none; }
   }
 
   function renderStudyProgress() {
-    var t = today(), tr = {}, tot = { plan: 0, done: 0, due: 0 }, act = { est: 0, real: 0 }, wk = { plan: 0, done: 0 }, curW = sWeekOf(t), lc1 = 0, lc2 = 0;
+    var t = today(), tr = {}, tot = { plan: 0, done: 0, due: 0 }, act = { est: 0, real: 0 }, wk = { plan: 0, done: 0 }, curW = sWeekOf(t), lc1 = 0, lc2 = 0, sc = { due: 0, done: 0 };
     SDAYS.forEach(function (sd, ix) {
       var date = sDateAt(ix);
       sd.rows.forEach(function (r) {
@@ -1500,12 +1604,14 @@ details.ncd > summary::-webkit-details-marker { display: none; }
         if (isLC(r)) { if (dn) { if (r.tid.indexOf("LC2-") === 0) lc2++; else lc1++; } return; }
         var k = (STASK[r.tid] || {}).track || "Other"; tr[k] = tr[k] || { plan: 0, done: 0 };
         tr[k].plan += r.est; tot.plan += r.est; if (date <= t) tot.due += r.est;
+        if (date < t || (date === t && dn)) { sc.due += r.est; if (dn) sc.done += r.est; } // score: today counts once it's done
         if (sd.week === curW) { wk.plan += r.est; if (dn) wk.done += r.est; }
         if (dn) { tr[k].done += r.est; tot.done += r.est; if (L && num(L.h) != null) { act.est += r.est; act.real += num(L.h); } }
       });
     });
     var diff = tot.done - tot.due, solved = SNC.filter(function (p) { return p.before; }).length + lc1;
-    var h = '<section class="panel"><h2>Overall</h2><div class="stats"><div class="stat"><b class="num">' + Math.round(100 * tot.done / tot.plan) + '%</b><span>' + fmtH(tot.done) + ' of ' + Math.round(tot.plan) + ' h</span></div>' +
+    var h = scoreGauge("Study score", sc.due ? 100 * sc.done / sc.due : 0, sc.due ? "Share of the study hours planned so far that you've done" : "Starts counting once your first study day is over");
+    h += '<section class="panel"><h2>Overall</h2><div class="stats"><div class="stat"><b class="num">' + Math.round(100 * tot.done / tot.plan) + '%</b><span>' + fmtH(tot.done) + ' of ' + Math.round(tot.plan) + ' h</span></div>' +
       '<div class="stat"><b class="num">' + (diff >= 0 ? "+" : "−") + Math.abs(Math.round(diff * 10) / 10) + '</b><span>h vs plan to date</span></div>' +
       '<div class="stat"><b class="num">' + (act.est ? (Math.round(100 * act.real / act.est) / 100) + "×" : "–") + '</b><span>Actual ÷ planned</span></div></div>' +
       '<p class="small muted" style="margin:0">' + (act.est ? "Pace uses the rows where you logged actual hours. Above 1.2× for two weeks: tell Claude and the plan gets re-flowed." : "Log actual hours on each task this week: they show whether the plan's 1.5× pace holds.") + ' Study ends ' + esc(fmtDate(SP.end, { day: "numeric", month: "short", year: "numeric" })) + '.</p></section>';
@@ -1557,7 +1663,7 @@ details.ncd > summary::-webkit-details-marker { display: none; }
 
   function renderStudyMe() {
     var total = 0; SDAYS.forEach(function (sd) { sd.rows.forEach(function (r) { if (!isLC(r)) total += r.est; }); });
-    return renderSyncPanel() + '<section class="panel"><h2>Study plan</h2><p class="small muted" style="margin:0">' + SDAYS.length + ' days from ' + esc(fmtDate(SP.start, { day: "numeric", month: "short", year: "numeric" })) + ' to ' + esc(fmtDate(SP.end, { day: "numeric", month: "short", year: "numeric" })) +
+    return renderSyncPanel() + renderLook() + '<section class="panel"><h2>Study plan</h2><p class="small muted" style="margin:0">' + SDAYS.length + ' days from ' + esc(fmtDate(SP.start, { day: "numeric", month: "short", year: "numeric" })) + ' to ' + esc(fmtDate(SP.end, { day: "numeric", month: "short", year: "numeric" })) +
       ', 4 h a day (' + Math.round(total) + ' h in all) plus one NeetCode problem. Sundays are a 2 h buffer for anything unfinished and a 2 h weekly review. Ticks, hours and notes save on this phone and sync with your workout log.</p>' +
       '<p class="small muted" style="margin:0">The plan comes from study_tracker.xlsx. If it gets re-flowed, re-export it with tools/build_study.py and rebuild the app; ticks stay attached to their task IDs.</p></section>';
   }
@@ -1612,8 +1718,12 @@ details.ncd > summary::-webkit-details-marker { display: none; }
     if (tip) { var t = document.getElementById("tip-" + tip.dataset.chart); if (t) t.textContent = tip.dataset.tip; return; }
     var b = ev.target.closest("[data-act]"); if (!b || b.disabled) return;
     var act = b.dataset.act, i = b.dataset.i != null ? Number(b.dataset.i) : null, date = state.date, pd = planDay(date);
+    var wasDone = cardDone(act, b, i, date, pd), burst = wasDone === false ? b.getBoundingClientRect() : null, burstCol = burst ? getComputedStyle(b).getPropertyValue("--c").trim() : "";
     switch (act) {
       case "home": goHome(); break;
+      case "look-theme": prefSet("theme", b.dataset.v === "system" ? null : b.dataset.v); applyLook(); render(); break;
+      case "look-accent": prefSet("accent", b.dataset.v === ACCENTS[0] ? null : b.dataset.v); applyLook(); render(); break;
+      case "look-confetti": prefSet("confetti", prefGet("confetti") === "off" ? null : "off"); render(); break;
       case "pick-study": state.sdate = pickStudyDate(); state.sweek = null; goStudy("today"); break;
       case "pick-ex": go("today"); break;
       case "sday-prev": state.sdate = addDays(state.sdate, -1); render(); break;
@@ -1689,7 +1799,13 @@ details.ncd > summary::-webkit-details-marker { display: none; }
         scheduleSave("app/milestones", function () { return state.milestones; }); render(); break;
       }
     }
+    if (wasDone === false && cardDone(act, b, i, date, pd)) confetti(burst, burstCol);
   });
+  function cardDone(act, b, i, date, pd) { // is the card this tick belongs to finished? null when the tap isn't a tick
+    if (act === "sstep" || act === "spart") { var L = sPeek(state.sdate, b.dataset.key); return !!(L && L.d); }
+    if (pd && i != null && pd.items[i] && ["set", "check", "run", "savetest", "sub", "kegel"].indexOf(act) >= 0) return itemDone(date, i, pd.items[i], pd.week) >= 0.99;
+    return null;
+  }
   function setTest(key, col, val) {
     state.tests = clone(state.tests || {}); state.tests[key] = state.tests[key] || {};
     if (val === null || val === "") delete state.tests[key][col]; else state.tests[key][col] = val;
@@ -1812,6 +1928,7 @@ details.ncd > summary::-webkit-details-marker { display: none; }
   } else { state.section = "home"; state.tab = prefGet("tab") || "today"; }
   state.sdate = pickStudyDate();
   pickInitialDate();
+  applyLook();
   render();
   startSync();
 })();
